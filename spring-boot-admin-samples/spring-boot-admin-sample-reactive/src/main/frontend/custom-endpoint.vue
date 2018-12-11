@@ -17,26 +17,26 @@
 <template>
   <div class="custom">
     Instance: <span v-text="instance.id"/>
-    Output: <span v-text="text"/>
+    Output: <span v-text="advancedmetrics"/>
   </div>
 </template>
 
 <script>
-export default {
-  props: {
-    instance: { //<1>
-      type: Object,
-      required: true
+  export default {
+    props: {
+      instance: {
+        type: Array,
+        default: () => []
+      }
+    },
+    data: () => ({
+      advancedmetrics: []
+    }),
+    async created() {
+      const response = await this.instance.axios.get('http://thinkehr4.marand.si:8865/actuator/advancedmetrics');
+      this.advancedmetrics = response.data;
     }
-  },
-  data: () => ({
-    text: ''
-  }),
-  async created() {
-    const response = await this.instance.axios.get('actuator/custom'); //<2>
-    this.text = response.data;
-  }
-};
+  };
 </script>
 
 <style>

@@ -21,8 +21,10 @@ import de.codecentric.boot.admin.server.config.EnableAdminServer;
 import de.codecentric.boot.admin.server.domain.entities.InstanceRepository;
 import de.codecentric.boot.admin.server.notify.LoggingNotifier;
 
+import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -34,14 +36,18 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @EnableAutoConfiguration
 @EnableAdminServer
 public class SpringBootAdminApplication {
-    private final String adminContextPath;
-
-    public SpringBootAdminApplication(AdminServerProperties adminServerProperties) {
-        this.adminContextPath = adminServerProperties.getContextPath();
-    }
 
     public static void main(String[] args) {
-        SpringApplication.run(SpringBootAdminApplication.class, args);
+        new SpringApplicationBuilder()
+        	.bannerMode(Banner.Mode.OFF)
+        	.sources(SpringBootAdminApplication.class)
+        	.run(args);
+    }
+
+    @Bean
+    @Primary
+    public CustomEndpoint customEndpoint() {
+        return new CustomEndpoint();
     }
 
     @Bean
@@ -55,10 +61,5 @@ public class SpringBootAdminApplication {
     @Bean
     public LoggingNotifier loggerNotifier(InstanceRepository repository) {
         return new LoggingNotifier(repository);
-    }
-
-    @Bean
-    public CustomEndpoint customEndpoint() {
-        return new CustomEndpoint();
     }
 }

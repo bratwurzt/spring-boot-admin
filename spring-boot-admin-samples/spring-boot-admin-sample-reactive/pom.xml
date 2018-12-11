@@ -116,18 +116,24 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>repackage</goal>
                             <goal>build-info</goal>
+                            <goal>repackage</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
                     <mainClass>de.codecentric.boot.admin.SpringBootAdminApplication</mainClass>
-                    <addResources>false</addResources>
                 </configuration>
             </plugin>
         </plugins>
         <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.properties</include>
+                </includes>
+            </resource>
             <resource>
                 <directory>target/dist</directory>
                 <targetPath>META-INF/spring-boot-admin-server-ui/extensions/custom</targetPath>
