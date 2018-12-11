@@ -39,8 +39,6 @@ spring:
         cache-templates: false
 
 ---
-spring:
-  profiles: insecure
 
 ---
 spring:

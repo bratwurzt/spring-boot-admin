@@ -25,6 +25,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
@@ -44,7 +45,7 @@ public class SpringBootAdminApplication {
     }
 
     @Bean
-    @Profile("insecure")
+    @Primary
     public SecurityWebFilterChain securityWebFilterChainPermitAll(ServerHttpSecurity http) {
         return http.authorizeExchange().anyExchange().permitAll()//
                    .and().csrf().disable()//
@@ -52,24 +53,12 @@ public class SpringBootAdminApplication {
     }
 
     @Bean
-    @Profile("secure")
-    public SecurityWebFilterChain securityWebFilterChainSecure(ServerHttpSecurity http) {
-        // @formatter:off
-        return http.authorizeExchange()
-                .pathMatchers(adminContextPath + "/assets/**").permitAll()
-                .pathMatchers(adminContextPath + "/login").permitAll()
-                .anyExchange().authenticated()
-                .and()
-            .formLogin().loginPage(adminContextPath + "/login").and()
-            .logout().logoutUrl(adminContextPath + "/logout").and()
-            .httpBasic().and()
-            .csrf().disable()
-            .build();
-        // @formatter:on
+    public LoggingNotifier loggerNotifier(InstanceRepository repository) {
+        return new LoggingNotifier(repository);
     }
 
     @Bean
-    public LoggingNotifier loggerNotifier(InstanceRepository repository) {
-        return new LoggingNotifier(repository);
+    public CustomEndpoint customEndpoint() {
+        return new CustomEndpoint();
     }
 }

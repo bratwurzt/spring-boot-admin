@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package de.codecentric.boot.admin;
+/* global SBA */
+import customEndpoint from './custom-endpoint';
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = {SpringBootAdminApplication.class})
-public class SpringBootAdminApplicationTest {
-    @Test
-    public void contextLoads() {
-    }
-}
+// tag::customization-ui-endpoint[]
+SBA.use({
+  install({viewRegistry}) {
+    viewRegistry.addView({
+      name: 'instances/custom',
+      parent: 'instances', // <1>
+      path: 'custom',
+      component: customEndpoint,
+      label: 'Custom',
+      order: 10,
+      isEnabled: ({instance}) => instance.hasEndpoint('custom') // <2>
+    });
+  }
+});
+// end::customization-ui-endpoint[]
