@@ -1,27 +1,28 @@
 {
   "histogramSnapshots": [
     {
-      "name": "/ehr/{ehrId}/work-plan/{mWorkPlanId}",
+      "name": "/ehr/{ehrId}/work-plan/instantiate",
       "histogramSnapshot": {
         "percentileValues": [
           {
             "percentile": 0.9,
-            "value": 316669952
+            "value": 757071872
           },
           {
             "percentile": 0.95,
-            "value": 316669952
+            "value": 1256194048
           },
           {
             "percentile": 0.99,
-            "value": 316669952
+            "value": 1256194048
           }
         ],
-        "count": 1,
-        "total": 317673101,
-        "max": 317673101,
-        "mean": 317673101
-      }
+        "count": 15,
+        "total": 8075419953,
+        "max": 1254733439,
+        "mean": 538361330.2
+      },
+      "errorCount": {}
     },
     {
       "name": "/ehr/{ehrId}/work-plan/{mWorkPlanId}",
@@ -29,21 +30,25 @@
         "percentileValues": [
           {
             "percentile": 0.9,
-            "value": 270532608
+            "value": 1828716544
           },
           {
             "percentile": 0.95,
-            "value": 270532608
+            "value": 2441084928
           },
           {
             "percentile": 0.99,
-            "value": 270532608
+            "value": 2441084928
           }
         ],
-        "count": 1,
-        "total": 271721508,
-        "max": 271721508,
-        "mean": 271721508
+        "count": 14,
+        "total": 22757994334,
+        "max": 2448220985,
+        "mean": 1625571023.857
+      },
+      "errorCount": {
+        "ServerWebInputException": 9,
+        "AlreadyActivatedException": 11
       }
     },
     {
@@ -52,22 +57,23 @@
         "percentileValues": [
           {
             "percentile": 0.9,
-            "value": 310378496
+            "value": 1077936128
           },
           {
             "percentile": 0.95,
-            "value": 310378496
+            "value": 1245708288
           },
           {
             "percentile": 0.99,
-            "value": 310378496
+            "value": 1245708288
           }
         ],
-        "count": 1,
-        "total": 310507295,
-        "max": 310507295,
-        "mean": 310507295
-      }
+        "count": 12,
+        "total": 11353799806,
+        "max": 1244256055,
+        "mean": 946149983.833
+      },
+      "errorCount": {}
     },
     {
       "name": "/ehr/{ehrId}/work-plan/{mWorkPlanId}/state",
@@ -75,68 +81,47 @@
         "percentileValues": [
           {
             "percentile": 0.9,
-            "value": 135266304
+            "value": 1212153856
           },
           {
             "percentile": 0.95,
-            "value": 135266304
+            "value": 1237319680
           },
           {
             "percentile": 0.99,
-            "value": 135266304
+            "value": 1237319680
           }
         ],
-        "count": 1,
-        "total": 135867682,
-        "max": 135867682,
-        "mean": 135867682
-      }
+        "count": 12,
+        "total": 13357580723,
+        "max": 1241121336,
+        "mean": 1113131726.917
+      },
+      "errorCount": {}
     },
     {
-      "name": "/ehr/{ehrId}/work-plan/{mWorkPlanId}/state",
+      "name": "/ehr/{ehrId}/work-plan/materialise/{workPlanId}",
       "histogramSnapshot": {
         "percentileValues": [
           {
             "percentile": 0.9,
-            "value": 125829120
+            "value": 351272960
           },
           {
             "percentile": 0.95,
-            "value": 125829120
+            "value": 1114636288
           },
           {
             "percentile": 0.99,
-            "value": 125829120
+            "value": 1114636288
           }
         ],
-        "count": 1,
-        "total": 126349013,
-        "max": 126349013,
-        "mean": 126349013
-      }
-    },
-    {
-      "name": "/ehr/{ehrId}/work-plan/{mWorkPlanId}/performer",
-      "histogramSnapshot": {
-        "percentileValues": [
-          {
-            "percentile": 0.9,
-            "value": 258998272
-          },
-          {
-            "percentile": 0.95,
-            "value": 258998272
-          },
-          {
-            "percentile": 0.99,
-            "value": 258998272
-          }
-        ],
-        "count": 1,
-        "total": 259299319,
-        "max": 259299319,
-        "mean": 259299319
-      }
+        "count": 14,
+        "total": 4411801580,
+        "max": 1114328975,
+        "mean": 315128684.286
+      },
+      "errorCount": {}
     },
     {
       "name": "/plan",
@@ -144,91 +129,23 @@
         "percentileValues": [
           {
             "percentile": 0.9,
-            "value": 42991616
+            "value": 56885248
           },
           {
             "percentile": 0.95,
-            "value": 42991616
+            "value": 333185024
           },
           {
             "percentile": 0.99,
-            "value": 42991616
+            "value": 333185024
           }
         ],
-        "count": 1,
-        "total": 43154924,
-        "max": 43154924,
-        "mean": 43154924
-      }
-    },
-    {
-      "name": "/ehr/{ehrId}/work-plan/{mWorkPlanId}/state",
-      "histogramSnapshot": {
-        "percentileValues": [
-          {
-            "percentile": 0.9,
-            "value": 131072000
-          },
-          {
-            "percentile": 0.95,
-            "value": 131072000
-          },
-          {
-            "percentile": 0.99,
-            "value": 131072000
-          }
-        ],
-        "count": 1,
-        "total": 131497818,
-        "max": 131497818,
-        "mean": 131497818
-      }
-    },
-    {
-      "name": "/ehr/{ehrId}/work-plan/{mWorkPlanId}/performer",
-      "histogramSnapshot": {
-        "percentileValues": [
-          {
-            "percentile": 0.9,
-            "value": 270532608
-          },
-          {
-            "percentile": 0.95,
-            "value": 270532608
-          },
-          {
-            "percentile": 0.99,
-            "value": 270532608
-          }
-        ],
-        "count": 1,
-        "total": 270538511,
-        "max": 270538511,
-        "mean": 270538511
-      }
-    },
-    {
-      "name": "/plan",
-      "histogramSnapshot": {
-        "percentileValues": [
-          {
-            "percentile": 0.9,
-            "value": 0
-          },
-          {
-            "percentile": 0.95,
-            "value": 0
-          },
-          {
-            "percentile": 0.99,
-            "value": 0
-          }
-        ],
-        "count": 1,
-        "total": 37737720,
-        "max": 37737720,
-        "mean": 37737720
-      }
+        "count": 13,
+        "total": 931091257,
+        "max": 332884787,
+        "mean": 71622404.385
+      },
+      "errorCount": {}
     }
   ]
 }
