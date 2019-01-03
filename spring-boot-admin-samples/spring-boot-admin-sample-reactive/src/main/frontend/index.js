@@ -21,13 +21,11 @@ import customEndpoint from './custom-endpoint';
 SBA.use({
   install({viewRegistry}) {
     viewRegistry.addView({
-      name: 'instances/custom',
-      parent: 'instances', // <1>
-      path: 'custom',
-      component: customEndpoint,
-      label: 'Custom',
-      order: 10,
-      isEnabled: ({instance}) => instance.hasEndpoint('custom') // <2>
+      path: '/statistics',
+      name: 'statistics',
+      label: 'Statistics',
+      order: 100,
+      component: customEndpoint
     });
   }
 });
