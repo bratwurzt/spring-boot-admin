@@ -15,12 +15,6 @@
   -->
 
 <template>
-  <!--<div class="custom">
-    Instance: <span v-text="instance.id"/>
-    Output: <span v-text="advancedmetrics"/>
-
-  </div>-->
-
 
   <div class="section">
     <div class="container">

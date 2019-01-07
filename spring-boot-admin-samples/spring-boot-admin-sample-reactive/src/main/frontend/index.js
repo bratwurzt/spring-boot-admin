@@ -15,7 +15,7 @@
  */
 
 /* global SBA */
-import customEndpoint from './custom-endpoint';
+import statisticsEndpoint from './statistics-endpoint';
 
 // tag::customization-ui-endpoint[]
 SBA.use({
@@ -24,7 +24,7 @@ SBA.use({
       name: 'instances/custom',
       parent: 'instances', // <1>
       path: 'statistics',
-      component: customEndpoint,
+      component: statisticsEndpoint,
       label: 'Statistics',
       order: 10,
       isEnabled: ({instance}) => instance.hasEndpoint('custom') // <2>
