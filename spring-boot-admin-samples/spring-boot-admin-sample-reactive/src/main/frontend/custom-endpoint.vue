@@ -24,7 +24,7 @@
 
   <div class="section">
     <div class="container">
-      <h1 class="title">Statistics Journal</h1>
+      <h1 class="title">Statistics </h1>
       <div v-if="error" class="message is-warning">
         <div class="message-body">
           <strong>
@@ -38,10 +38,18 @@
         <thead>
         <tr>
           <th>Path</th>
-          <th>Count</th>
-          <th>Total</th>
-          <th>Max</th>
-          <th>Mean</th>
+          <th>Count <a href="#" @click="loadData(ORDER_BY_COUNT, SORT_ORDER_ASC)">&#9650;</a> <a href="#"
+                                                                                                 @click="loadData(ORDER_BY_COUNT, SORT_ORDER_DESC)">&#9660;</a>
+          </th>
+          <th>Total [ms] <a href="#" @click="loadData(ORDER_BY_TOTAL, SORT_ORDER_ASC)">&#9650;</a> <a href="#"
+                                                                                                      @click="loadData(ORDER_BY_TOTAL, SORT_ORDER_DESC)">&#9660;</a>
+          </th>
+          <th>Max [ms] <a href="#" @click="loadData(ORDER_BY_MAX, SORT_ORDER_ASC)">&#9650;</a> <a href="#"
+                                                                                                  @click="loadData(ORDER_BY_MAX, SORT_ORDER_DESC)">&#9660;</a>
+          </th>
+          <th>Average [ms] <a href="#" @click="loadData(ORDER_BY_AVERAGE, SORT_ORDER_ASC)">&#9650;</a> <a href="#"
+                                                                                                          @click="loadData(ORDER_BY_AVERAGE, SORT_ORDER_DESC)">&#9660;</a>
+          </th>
         </tr>
         </thead>
         <tbody>
@@ -49,10 +57,10 @@
           <tr class="is-selectable" :key="metric.key"
               @click="showPayload[metric.key] ? $delete(showPayload, metric.key) : $set(showPayload, metric.key, true)">
             <td v-text="metric.name"/>
-            <td v-text="metric.histogramSnapshot.count"/>
-            <td v-text="metric.histogramSnapshot.total"/>
-            <td v-text="metric.histogramSnapshot.max"/>
-            <td v-text="metric.histogramSnapshot.mean"/>
+            <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.count:''"/>
+            <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.total:''"/>
+            <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.max:''"/>
+            <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.mean:''"/>
           </tr>
           <tr :key="`${metric.key}-detail`" v-if="showPayload[metric.key]">
             <td colspan="4">
@@ -62,6 +70,12 @@
         </template>
         </tbody>
       </table>
+      <div v-bind:class="{ 'hide-preloader': !requestStatus.type }" class="lds-ellipsis">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
     </div>
   </div>
 
@@ -76,167 +90,69 @@
       }
     },
     data: () => ({
+      SORT_ORDER_ASC: 'asc',
+      SORT_ORDER_DESC: 'desc',
+      ORDER_BY_COUNT: 'count',
+      ORDER_BY_AVERAGE: 'avg',
+      ORDER_BY_TOTAL: 'sum',
+      ORDER_BY_MAX: 'max',
+      REQ_STATUS_TYPE_IDLE: '',
+      REQ_STATUS_TYPE_PROGRESS: 'progress',
+      REQ_STATUS_TYPE_ERROR: 'error',
+      requestStatus: {message: '', type: ''},
       advancedmetrics: [],
       showPayload: {},
+
     }),
     methods: {
       toJson(obj) {
         return JSON.stringify(obj, null, 4);
       },
+      async loadData(sortBy, sortOrder) {
+        this.advancedmetrics = [];
+        this.requestStatus = {type: this.REQ_STATUS_TYPE_PROGRESS};
+
+        let reqUrl = 'https://thinkehr4.marand.si:8865/actuator/advancedmetrics';
+        if (sortBy) {
+          reqUrl += '?order=' + sortBy;
+        }
+        if (sortOrder) {
+          reqUrl += '&sort=' + sortOrder;
+        }
+        console.log('reqURL=', reqUrl);
+        var response = await this.instance.axios.get(reqUrl);
+        var responseData = response.data;
+        let addKeyIdent = v => {
+          v.key = Math.random();
+          return v;
+        };
+
+        let nanoToMillis = (v) => {
+          return parseInt((v / 1000000).toString(10), 10);
+        };
+
+        let toMilliseconds = (val) => {
+          ['total', 'max', 'mean'].forEach((propName) => {
+            val.histogramSnapshot[propName] = nanoToMillis(val.histogramSnapshot[propName], 'nanoseconds');
+          });
+
+          val.histogramSnapshot.percentileValues = val.histogramSnapshot.percentileValues.map((perc) => {
+            perc.value = nanoToMillis(perc.value, 'nanoseconds');
+            return perc;
+          });
+          return val;
+        };
+
+        let sanitizedResponse = responseData.histogramSnapshots.map(addKeyIdent).map(toMilliseconds);
+        this.advancedmetrics = sanitizedResponse;
+
+        this.requestStatus = {type: this.REQ_STATUS_TYPE_IDLE};
+
+        return response;
+      },
     },
-    //async created() {
-    created() {
-      /*const response = await this.instance.axios.get('http://thinkehr4.marand.si:8865/actuator/advancedmetrics');
-      this.advancedmetrics = response.data;*/
-      var responseData = {
-        "histogramSnapshots": [
-          {
-            "name": "/ehr/{ehrId}/work-plan/{mWorkPlanId}/state",
-            "histogramSnapshot": {
-              "percentileValues": [
-                {
-                  "percentile": 0.9,
-                  "value": 1195376640
-                },
-                {
-                  "percentile": 0.95,
-                  "value": 1228931072
-                },
-                {
-                  "percentile": 0.99,
-                  "value": 1279262720
-                }
-              ],
-              "count": 50,
-              "total": 51810516919,
-              "max": 1279516533,
-              "mean": 1036210338.38
-            },
-            "errorCount": null
-          },
-          {
-            "name": "/ehr/{ehrId}/work-plan/{mWorkPlanId}/performer",
-            "histogramSnapshot": {
-              "percentileValues": [
-                {
-                  "percentile": 0.9,
-                  "value": 956301312
-                },
-                {
-                  "percentile": 0.95,
-                  "value": 1010827264
-                },
-                {
-                  "percentile": 0.99,
-                  "value": 1296039936
-                }
-              ],
-              "count": 50,
-              "total": 42022463051,
-              "max": 1299304352,
-              "mean": 840449261.02
-            },
-            "errorCount": null
-          },
-          {
-            "name": "/ehr/{ehrId}/work-plan/{mWorkPlanId}",
-            "histogramSnapshot": {
-              "percentileValues": [
-                {
-                  "percentile": 0.9,
-                  "value": 1577058304
-                },
-                {
-                  "percentile": 0.95,
-                  "value": 1702887424
-                },
-                {
-                  "percentile": 0.99,
-                  "value": 2508193792
-                }
-              ],
-              "count": 50,
-              "total": 74006638489,
-              "max": 2500085333,
-              "mean": 1480132769.78
-            },
-            "errorCount": null
-          },
-          {
-            "name": "/ehr/{ehrId}/work-plan/materialise/{workPlanId}",
-            "histogramSnapshot": {
-              "percentileValues": [
-                {
-                  "percentile": 0.9,
-                  "value": 266338304
-                },
-                {
-                  "percentile": 0.95,
-                  "value": 321912832
-                },
-                {
-                  "percentile": 0.99,
-                  "value": 1164967936
-                }
-              ],
-              "count": 50,
-              "total": 10396352263,
-              "max": 1161339907,
-              "mean": 207927045.26
-            },
-            "errorCount": null
-          },
-          {
-            "name": "/ehr/{ehrId}/work-plan/instantiate",
-            "histogramSnapshot": {
-              "percentileValues": [
-                {
-                  "percentile": 0.9,
-                  "value": 476053504
-                },
-                {
-                  "percentile": 0.95,
-                  "value": 503316480
-                },
-                {
-                  "percentile": 0.99,
-                  "value": 1306525696
-                }
-              ],
-              "count": 50,
-              "total": 22366417445,
-              "max": 1303533086,
-              "mean": 447328348.9
-            },
-            "errorCount": null
-          },
-          {
-            "name": "/plan",
-            "histogramSnapshot": {
-              "percentileValues": [
-                {
-                  "percentile": 0.9,
-                  "value": 52428800
-                },
-                {
-                  "percentile": 0.95,
-                  "value": 86245376
-                },
-                {
-                  "percentile": 0.99,
-                  "value": 364642304
-                }
-              ],
-              "count": 50,
-              "total": 2789598613,
-              "max": 363491323,
-              "mean": 55791972.26
-            },
-            "errorCount": null
-          }
-        ]
-      };
-      this.advancedmetrics = responseData.histogramSnapshots.map(v=>{v.key=Math.random();return v});
+    async created() {
+      this.loadData();
     },
 
   };
@@ -247,4 +163,75 @@
     font-size: 20px;
     width: 80%;
   }
+
+  /*PRELOADER*/
+  .lds-ellipsis.hide-preloader {
+    display: none;
+  }
+
+  .lds-ellipsis {
+    display: inline-block;
+    position: relative;
+    width: 64px;
+    height: 64px;
+  }
+
+  .lds-ellipsis div {
+    position: absolute;
+    top: 27px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #242424;
+    animation-timing-function: cubic-bezier(0, 1, 1, 0);
+  }
+
+  .lds-ellipsis div:nth-child(1) {
+    left: 6px;
+    animation: lds-ellipsis1 0.6s infinite;
+  }
+
+  .lds-ellipsis div:nth-child(2) {
+    left: 6px;
+    animation: lds-ellipsis2 0.6s infinite;
+  }
+
+  .lds-ellipsis div:nth-child(3) {
+    left: 26px;
+    animation: lds-ellipsis2 0.6s infinite;
+  }
+
+  .lds-ellipsis div:nth-child(4) {
+    left: 45px;
+    animation: lds-ellipsis3 0.6s infinite;
+  }
+
+  @keyframes lds-ellipsis1 {
+    0% {
+      transform: scale(0);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes lds-ellipsis3 {
+    0% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(0);
+    }
+  }
+
+  @keyframes lds-ellipsis2 {
+    0% {
+      transform: translate(0, 0);
+    }
+    100% {
+      transform: translate(19px, 0);
+    }
+  }
+
+  /*END PRELOADER*/
 </style>
