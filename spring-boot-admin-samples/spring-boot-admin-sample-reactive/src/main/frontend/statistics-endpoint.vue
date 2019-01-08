@@ -32,51 +32,65 @@
         <thead>
         <tr>
           <th>Path</th>
-          <th>Count <a href="#" @click="loadData(ORDER_BY_COUNT, SORT_ORDER_ASC)">&#9650;</a> <a href="#"
-                                                                                                 @click="loadData(ORDER_BY_COUNT, SORT_ORDER_DESC)">&#9660;</a>
+          <th>Count <a href="#"
+                       @click="orderData(ORDER_BY_COUNT, SORT_ORDER_DESC)">&#9660;</a> <a href="#"
+                                                                                          @click="orderData(ORDER_BY_COUNT, SORT_ORDER_ASC)">&#9650;</a>
           </th>
-          <th>Total [ms] <a href="#" @click="loadData(ORDER_BY_TOTAL, SORT_ORDER_ASC)">&#9650;</a> <a href="#"
-                                                                                                      @click="loadData(ORDER_BY_TOTAL, SORT_ORDER_DESC)">&#9660;</a>
+          <th>Total [ms] <a href="#"
+                            @click="orderData(ORDER_BY_TOTAL, SORT_ORDER_DESC)">&#9660;</a> <a href="#"
+                                                                                               @click="orderData(ORDER_BY_TOTAL, SORT_ORDER_ASC)">&#9650;</a>
           </th>
-          <th>Max [ms] <a href="#" @click="loadData(ORDER_BY_MAX, SORT_ORDER_ASC)">&#9650;</a> <a href="#"
-                                                                                                  @click="loadData(ORDER_BY_MAX, SORT_ORDER_DESC)">&#9660;</a>
+          <th>Max [ms] <a href="#"
+                          @click="orderData(ORDER_BY_MAX, SORT_ORDER_DESC)">&#9660;</a> <a href="#"
+                                                                                           @click="orderData(ORDER_BY_MAX, SORT_ORDER_ASC)">&#9650;</a>
           </th>
-          <th>Average [ms] <a href="#" @click="loadData(ORDER_BY_AVERAGE, SORT_ORDER_ASC)">&#9650;</a> <a href="#"
-                                                                                                          @click="loadData(ORDER_BY_AVERAGE, SORT_ORDER_DESC)">&#9660;</a>
+          <th>Average [ms] <a href="#"
+                              @click="orderData(ORDER_BY_AVERAGE, SORT_ORDER_DESC)">&#9660;</a> <a href="#"
+                                                                                                   @click="orderData(ORDER_BY_AVERAGE, SORT_ORDER_ASC)">&#9650;</a>
           </th>
+          <th>Percentile {{percentileValuesLabelArr[0]}}</th>
+          <th>Percentile {{percentileValuesLabelArr[1]}}</th>
+          <th>Percentile {{percentileValuesLabelArr[2]}}</th>
         </tr>
         </thead>
         <tbody>
         <template v-for="metric in advancedmetrics">
-          <tr class="is-selectable" :key="metric.key"
-              @click="showPayload[metric.key] ? $delete(showPayload, metric.key) : $set(showPayload, metric.key, true)">
+          <tr class="" :key="metric.key"><!--<tr class="is-selectable" :key="metric.key"
+              @click="showPayload[metric.key] ? $delete(showPayload, metric.key) : $set(showPayload, metric.key, true)">-->
             <td v-text="metric.name"/>
             <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.count:''"/>
             <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.total:''"/>
             <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.max:''"/>
             <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.mean:''"/>
+            <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.percentileValues[0].value:''"/>
+            <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.percentileValues[1].value:''"/>
+            <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.percentileValues[2].value:''"/>
           </tr>
-          <tr :key="`${metric.key}-detail`" v-if="showPayload[metric.key]">
+          <!--<tr :key="`${metric.key}-detail`" v-if="showPayload[metric.key]">
             <td colspan="4">
               <pre v-text="toJson(metric.histogramSnapshot.percentileValues)"/>
             </td>
-          </tr>
+          </tr>-->
         </template>
         </tbody>
       </table>
-      <div v-bind:class="{ 'hide-preloader': !requestStatus.type }" class="lds-ellipsis">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
     </div>
   </div>
 
 </template>
 
 <script>
+
+  import {timer, BehaviorSubject, } from 'rxjs';
+  import { switchMap, combineLatest} from 'rxjs/operators';
+
   export default {
+    created() {
+      this.subscribe();
+    },
+    beforeDestroy() {
+      this.unsubscribe();
+    },
     props: {
       instance: {
         type: Array,
@@ -90,31 +104,46 @@
       ORDER_BY_AVERAGE: 'avg',
       ORDER_BY_TOTAL: 'sum',
       ORDER_BY_MAX: 'max',
-      REQ_STATUS_TYPE_IDLE: '',
-      REQ_STATUS_TYPE_PROGRESS: 'progress',
-      REQ_STATUS_TYPE_ERROR: 'error',
-      requestStatus: {message: '', type: ''},
       advancedmetrics: [],
       showPayload: {},
-
+      percentileValuesLabelArr: [],
+      subscription:null,
+      filterDataSubject:new BehaviorSubject([])
     }),
     methods: {
+
       toJson(obj) {
         return JSON.stringify(obj, null, 4);
       },
-      async loadData(sortBy, sortOrder) {
-        this.advancedmetrics = [];
-        this.requestStatus = {type: this.REQ_STATUS_TYPE_PROGRESS};
+
+      parsePercentileValuesLabelArr(snapshotItem) {
+        if (snapshotItem && snapshotItem.histogramSnapshot && snapshotItem.histogramSnapshot.percentileValues && snapshotItem.histogramSnapshot.percentileValues.length) {
+          return snapshotItem.histogramSnapshot.percentileValues.map(function (percVal) {
+            return percVal.percentile.toString();
+          });
+        }
+        return [];
+      },
+
+      orderData(sortBy, sortOrder){
+        this.filterDataSubject.next([sortBy, sortOrder]);
+      },
+
+      async fetchData(sortBy, sortOrder) {
 
         let reqUrl = 'https://thinkehr4.marand.si:8865/actuator/advancedmetrics';
         if (sortBy) {
           reqUrl += '?order=' + sortBy;
         }
         if (sortOrder) {
-          reqUrl += '&sort=' + sortOrder;
+          reqUrl += '&asc=' + (sortOrder === this.SORT_ORDER_ASC).toString();
         }
+
         console.log('reqURL=', reqUrl);
-        var response = await this.instance.axios.get(reqUrl);
+
+        var response = await this.instance.axios.get(reqUrl,{
+          headers: {'Accept': ['application/json']}
+        });
         var responseData = response.data;
         let addKeyIdent = v => {
           v.key = Math.random();
@@ -138,17 +167,50 @@
         };
 
         let sanitizedResponse = responseData.histogramSnapshots.map(addKeyIdent).map(toMilliseconds);
-        this.advancedmetrics = sanitizedResponse;
 
-        this.requestStatus = {type: this.REQ_STATUS_TYPE_IDLE};
-
-        return response;
+        return sanitizedResponse;
       },
-    },
-    async created() {
-      this.loadData();
-    },
 
+      createSubscription() {
+        const vm = this;
+        return  this.filterDataSubject.asObservable()
+          .pipe(
+            combineLatest(timer(0, 5000), (vArr)=>{return vArr&&vArr.length?vArr:[];}),
+            //concatMap(vm.fetchData)
+            switchMap((tmrSort)=>{
+              return vm.fetchData(tmrSort[0], tmrSort[1]);
+            })
+          )
+          .subscribe({
+            next: sanitizedResponse => {
+              this.advancedmetrics = sanitizedResponse;
+
+              this.percentileValuesLabelArr = this.parsePercentileValuesLabelArr(sanitizedResponse[0]);
+
+            },
+            error: error => {
+              console.warn('Fetching data failed:', error);
+              alert('Fetching data failed. '+ (error.message?error.message:''));
+            }
+          });
+      },
+
+      async subscribe() {
+        if (!this.subscription) {
+          this.subscription = await this.createSubscription();
+        }
+      },
+
+      unsubscribe() {
+        if (this.subscription) {
+          try {
+            !this.subscription.closed && this.subscription.unsubscribe();
+          } finally {
+            this.subscription = null;
+          }
+        }
+      }
+    }
   };
 </script>
 
@@ -157,75 +219,4 @@
     font-size: 20px;
     width: 80%;
   }
-
-  /*PRELOADER*/
-  .lds-ellipsis.hide-preloader {
-    display: none;
-  }
-
-  .lds-ellipsis {
-    display: inline-block;
-    position: relative;
-    width: 64px;
-    height: 64px;
-  }
-
-  .lds-ellipsis div {
-    position: absolute;
-    top: 27px;
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    background: #242424;
-    animation-timing-function: cubic-bezier(0, 1, 1, 0);
-  }
-
-  .lds-ellipsis div:nth-child(1) {
-    left: 6px;
-    animation: lds-ellipsis1 0.6s infinite;
-  }
-
-  .lds-ellipsis div:nth-child(2) {
-    left: 6px;
-    animation: lds-ellipsis2 0.6s infinite;
-  }
-
-  .lds-ellipsis div:nth-child(3) {
-    left: 26px;
-    animation: lds-ellipsis2 0.6s infinite;
-  }
-
-  .lds-ellipsis div:nth-child(4) {
-    left: 45px;
-    animation: lds-ellipsis3 0.6s infinite;
-  }
-
-  @keyframes lds-ellipsis1 {
-    0% {
-      transform: scale(0);
-    }
-    100% {
-      transform: scale(1);
-    }
-  }
-
-  @keyframes lds-ellipsis3 {
-    0% {
-      transform: scale(1);
-    }
-    100% {
-      transform: scale(0);
-    }
-  }
-
-  @keyframes lds-ellipsis2 {
-    0% {
-      transform: translate(0, 0);
-    }
-    100% {
-      transform: translate(19px, 0);
-    }
-  }
-
-  /*END PRELOADER*/
 </style>
