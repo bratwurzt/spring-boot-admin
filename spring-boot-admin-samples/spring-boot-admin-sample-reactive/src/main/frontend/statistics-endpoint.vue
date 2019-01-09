@@ -19,15 +19,7 @@
   <div class="section">
     <div class="container">
       <h1 class="title">Statistics </h1>
-      <div v-if="error" class="message is-warning">
-        <div class="message-body">
-          <strong>
-            <font-awesome-icon class="has-text-warning" icon="exclamation-triangle"/>
-            Server connection failed.
-          </strong>
-          <p v-text="error.message"/>
-        </div>
-      </div>
+
       <table class="table is-fullwidth">
         <thead>
         <tr>
@@ -75,8 +67,28 @@
         </tbody>
       </table>
     </div>
-  </div>
 
+    <div class="container">
+      <h1 class="title">Exceptions </h1>
+
+      <table class="table">
+        <thead>
+        <tr>
+          <th>Exception</th>
+          <th>Count</th>
+        </tr>
+        </thead>
+        <tbody>
+        <template v-for="exception in exceptions">
+          <tr class="">
+            <td v-text="exception.label"/>
+            <td v-text="exception.value"/>
+          </tr>
+        </template>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -105,9 +117,10 @@
       ORDER_BY_TOTAL: 'sum',
       ORDER_BY_MAX: 'max',
       advancedmetrics: [],
+      exceptions: [],
       showPayload: {},
       percentileValuesLabelArr: [],
-      subscription:null,
+      subscriptions:[],
       filterDataSubject:new BehaviorSubject([])
     }),
     methods: {
@@ -129,7 +142,7 @@
         this.filterDataSubject.next([sortBy, sortOrder]);
       },
 
-      async fetchData(sortBy, sortOrder) {
+      async fetchStatisticsData(sortBy, sortOrder) {
 
         let reqUrl = 'https://thinkehr4.marand.si:8865/actuator/advancedmetrics';
         if (sortBy) {
@@ -171,14 +184,25 @@
         return sanitizedResponse;
       },
 
-      createSubscription() {
+      async fetchExceptionsData() {
+
+        let reqUrl = 'https://thinkehr4.marand.si:8865/actuator/advancedmetrics/exceptions';
+
+        var response = await this.instance.axios.get(reqUrl,{
+          headers: {'Accept': ['application/json']}
+        });
+
+        return Object.keys(response.data).map(key=>{return {label:key, value:response.data[key]};});
+      },
+
+      createStatsSubscription() {
         const vm = this;
         return  this.filterDataSubject.asObservable()
           .pipe(
             combineLatest(timer(0, 5000), (vArr)=>{return vArr&&vArr.length?vArr:[];}),
-            //concatMap(vm.fetchData)
+            //concatMap(vm.fetchStatisticsData)
             switchMap((tmrSort)=>{
-              return vm.fetchData(tmrSort[0], tmrSort[1]);
+              return vm.fetchStatisticsData(tmrSort[0], tmrSort[1]);
             })
           )
           .subscribe({
@@ -195,18 +219,41 @@
           });
       },
 
+      createExceptionsSubscription() {
+        const vm = this;
+        return  timer(0, 5000).pipe(
+            switchMap(()=>{
+              return vm.fetchExceptionsData();
+            })
+          )
+          .subscribe({
+            next: exceptions => {
+console.log('EXC =', exceptions)
+this.exceptions= exceptions;
+            },
+            error: error => {
+              console.warn('Fetching exceptions data failed:', error);
+              alert('Fetching exceptions data failed. '+ (error.message?error.message:''));
+            }
+          });
+      },
+
       async subscribe() {
-        if (!this.subscription) {
-          this.subscription = await this.createSubscription();
+        if (!this.subscriptions.length) {
+          this.subscriptions.push (await this.createStatsSubscription());
+          this.subscriptions.push (await this.createExceptionsSubscription());
         }
       },
 
       unsubscribe() {
-        if (this.subscription) {
+        if (this.subscriptions.length) {
+
           try {
-            !this.subscription.closed && this.subscription.unsubscribe();
+            this.subscriptions.forEach((subs)=>{
+              !subs.closed && subs.unsubscribe();
+            });
           } finally {
-            this.subscription = null;
+            this.subscriptions.length=0;
           }
         }
       }
