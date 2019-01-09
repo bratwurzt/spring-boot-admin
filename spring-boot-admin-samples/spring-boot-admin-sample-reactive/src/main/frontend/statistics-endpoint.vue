@@ -1,18 +1,3 @@
-<!--
-  - Copyright 2014-2018 the original author or authors.
-  -
-  - Licensed under the Apache License, Version 2.0 (the "License");
-  - you may not use this file except in compliance with the License.
-  - You may obtain a copy of the License at
-  -
-  -     http://www.apache.org/licenses/LICENSE-2.0
-  -
-  - Unless required by applicable law or agreed to in writing, software
-  - distributed under the License is distributed on an "AS IS" BASIS,
-  - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  - See the License for the specific language governing permissions and
-  - limitations under the License.
-  -->
 
 <template>
 
@@ -25,30 +10,29 @@
         <tr>
           <th>Path</th>
           <th>Count <a href="#"
-                       @click="orderData(ORDER_BY_COUNT, SORT_ORDER_DESC)">&#9660;</a> <a href="#"
-                                                                                          @click="orderData(ORDER_BY_COUNT, SORT_ORDER_ASC)">&#9650;</a>
+                       @click="sortStatistics(ORDER_BY_COUNT, SORT_ORDER_DESC)">&#9660;</a> <a href="#"
+                                                                                               @click="sortStatistics(ORDER_BY_COUNT, SORT_ORDER_ASC)">&#9650;</a>
           </th>
           <th>Total [ms] <a href="#"
-                            @click="orderData(ORDER_BY_TOTAL, SORT_ORDER_DESC)">&#9660;</a> <a href="#"
-                                                                                               @click="orderData(ORDER_BY_TOTAL, SORT_ORDER_ASC)">&#9650;</a>
+                            @click="sortStatistics(ORDER_BY_TOTAL, SORT_ORDER_DESC)">&#9660;</a> <a href="#"
+                                                                                                    @click="sortStatistics(ORDER_BY_TOTAL, SORT_ORDER_ASC)">&#9650;</a>
           </th>
           <th>Max [ms] <a href="#"
-                          @click="orderData(ORDER_BY_MAX, SORT_ORDER_DESC)">&#9660;</a> <a href="#"
-                                                                                           @click="orderData(ORDER_BY_MAX, SORT_ORDER_ASC)">&#9650;</a>
+                          @click="sortStatistics(ORDER_BY_MAX, SORT_ORDER_DESC)">&#9660;</a> <a href="#"
+                                                                                                @click="sortStatistics(ORDER_BY_MAX, SORT_ORDER_ASC)">&#9650;</a>
           </th>
           <th>Average [ms] <a href="#"
-                              @click="orderData(ORDER_BY_AVERAGE, SORT_ORDER_DESC)">&#9660;</a> <a href="#"
-                                                                                                   @click="orderData(ORDER_BY_AVERAGE, SORT_ORDER_ASC)">&#9650;</a>
+                              @click="sortStatistics(ORDER_BY_AVERAGE, SORT_ORDER_DESC)">&#9660;</a> <a href="#"
+                                                                                                        @click="sortStatistics(ORDER_BY_AVERAGE, SORT_ORDER_ASC)">&#9650;</a>
           </th>
-          <th>Percentile {{percentileValuesLabelArr[0]}}</th>
-          <th>Percentile {{percentileValuesLabelArr[1]}}</th>
-          <th>Percentile {{percentileValuesLabelArr[2]}}</th>
+          <th>Percentile {{advancedmetrics.percentileValuesLabelArr[0]}}</th>
+          <th>Percentile {{advancedmetrics.percentileValuesLabelArr[1]}}</th>
+          <th>Percentile {{advancedmetrics.percentileValuesLabelArr[2]}}</th>
         </tr>
         </thead>
         <tbody>
-        <template v-for="metric in advancedmetrics">
-          <tr class="" :key="metric.key"><!--<tr class="is-selectable" :key="metric.key"
-              @click="showPayload[metric.key] ? $delete(showPayload, metric.key) : $set(showPayload, metric.key, true)">-->
+        <template v-for="metric in advancedmetrics.statistics">
+          <tr class="" :key="metric.key">
             <td v-text="metric.name"/>
             <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.count:''"/>
             <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.total:''"/>
@@ -58,18 +42,13 @@
             <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.percentileValues[1].value:''"/>
             <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.percentileValues[2].value:''"/>
           </tr>
-          <!--<tr :key="`${metric.key}-detail`" v-if="showPayload[metric.key]">
-            <td colspan="4">
-              <pre v-text="toJson(metric.histogramSnapshot.percentileValues)"/>
-            </td>
-          </tr>-->
         </template>
         </tbody>
       </table>
     </div>
 
-    <div class="container">
-      <h1 class="title">Exceptions </h1>
+    <div class="container exceptions-w">
+      <h1 class="title">Exceptions</h1>
 
       <table class="table">
         <thead>
@@ -93,8 +72,8 @@
 
 <script>
 
-  import {timer, BehaviorSubject, } from 'rxjs';
-  import { switchMap, combineLatest} from 'rxjs/operators';
+  import {timer, BehaviorSubject,} from 'rxjs';
+  import {switchMap, combineLatest} from 'rxjs/operators';
 
   export default {
     created() {
@@ -116,12 +95,10 @@
       ORDER_BY_AVERAGE: 'avg',
       ORDER_BY_TOTAL: 'sum',
       ORDER_BY_MAX: 'max',
-      advancedmetrics: [],
+      advancedmetrics: {statistics:[], percentileValuesLabelArr: []},
       exceptions: [],
-      showPayload: {},
-      percentileValuesLabelArr: [],
-      subscriptions:[],
-      filterDataSubject:new BehaviorSubject([])
+      subscriptions: [],
+      orderStatsDataSubject: new BehaviorSubject([])
     }),
     methods: {
 
@@ -138,8 +115,8 @@
         return [];
       },
 
-      orderData(sortBy, sortOrder){
-        this.filterDataSubject.next([sortBy, sortOrder]);
+      sortStatistics(sortBy, sortOrder) {
+        this.orderStatsDataSubject.next([sortBy, sortOrder]);
       },
 
       async fetchStatisticsData(sortBy, sortOrder) {
@@ -152,9 +129,9 @@
           reqUrl += '&asc=' + (sortOrder === this.SORT_ORDER_ASC).toString();
         }
 
-        console.log('reqURL=', reqUrl);
+        //console.log('stats req=', reqUrl);
 
-        var response = await this.instance.axios.get(reqUrl,{
+        var response = await this.instance.axios.get(reqUrl, {
           headers: {'Accept': ['application/json']}
         });
         var responseData = response.data;
@@ -188,60 +165,63 @@
 
         let reqUrl = 'https://thinkehr4.marand.si:8865/actuator/advancedmetrics/exceptions';
 
-        var response = await this.instance.axios.get(reqUrl,{
+        var response = await this.instance.axios.get(reqUrl, {
           headers: {'Accept': ['application/json']}
         });
 
-        return Object.keys(response.data).map(key=>{return {label:key, value:response.data[key]};});
+        return Object.keys(response.data).map(key => {
+          return {label: key, value: response.data[key]};
+        });
       },
 
       createStatsSubscription() {
         const vm = this;
-        return  this.filterDataSubject.asObservable()
+        return this.orderStatsDataSubject.asObservable()
           .pipe(
-            combineLatest(timer(0, 5000), (vArr)=>{return vArr&&vArr.length?vArr:[];}),
+            combineLatest(timer(0, 5000), (vArr) => {
+              return vArr && vArr.length ? vArr : [];
+            }),
             //concatMap(vm.fetchStatisticsData)
-            switchMap((tmrSort)=>{
+            switchMap((tmrSort) => {
               return vm.fetchStatisticsData(tmrSort[0], tmrSort[1]);
             })
           )
           .subscribe({
             next: sanitizedResponse => {
-              this.advancedmetrics = sanitizedResponse;
+              this.advancedmetrics.statistics = sanitizedResponse;
 
-              this.percentileValuesLabelArr = this.parsePercentileValuesLabelArr(sanitizedResponse[0]);
+              this.advancedmetrics.percentileValuesLabelArr = this.parsePercentileValuesLabelArr(sanitizedResponse[0]);
 
             },
             error: error => {
               console.warn('Fetching data failed:', error);
-              alert('Fetching data failed. '+ (error.message?error.message:''));
+              alert('Fetching data failed. ' + (error.message ? error.message : ''));
             }
           });
       },
 
       createExceptionsSubscription() {
         const vm = this;
-        return  timer(0, 5000).pipe(
-            switchMap(()=>{
-              return vm.fetchExceptionsData();
-            })
-          )
+        return timer(0, 5000).pipe(
+          switchMap(() => {
+            return vm.fetchExceptionsData();
+          })
+        )
           .subscribe({
             next: exceptions => {
-console.log('EXC =', exceptions)
-this.exceptions= exceptions;
+              this.exceptions = exceptions;
             },
             error: error => {
               console.warn('Fetching exceptions data failed:', error);
-              alert('Fetching exceptions data failed. '+ (error.message?error.message:''));
+              alert('Fetching exceptions data failed. ' + (error.message ? error.message : ''));
             }
           });
       },
 
       async subscribe() {
         if (!this.subscriptions.length) {
-          this.subscriptions.push (await this.createStatsSubscription());
-          this.subscriptions.push (await this.createExceptionsSubscription());
+          this.subscriptions.push(await this.createStatsSubscription());
+          this.subscriptions.push(await this.createExceptionsSubscription());
         }
       },
 
@@ -249,11 +229,11 @@ this.exceptions= exceptions;
         if (this.subscriptions.length) {
 
           try {
-            this.subscriptions.forEach((subs)=>{
+            this.subscriptions.forEach((subs) => {
               !subs.closed && subs.unsubscribe();
             });
           } finally {
-            this.subscriptions.length=0;
+            this.subscriptions.length = 0;
           }
         }
       }
@@ -262,8 +242,7 @@ this.exceptions= exceptions;
 </script>
 
 <style>
-  .custom {
-    font-size: 20px;
-    width: 80%;
+  .exceptions-w{
+    margin-top: 30px;
   }
 </style>
