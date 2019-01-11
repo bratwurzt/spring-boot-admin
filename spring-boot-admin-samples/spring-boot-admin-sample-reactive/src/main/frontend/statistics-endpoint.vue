@@ -9,20 +9,20 @@
         <thead>
         <tr>
           <th>Path</th>
-          <th>Count <a href="#"
-                       @click="sortStatistics(ORDER_BY_COUNT, SORT_ORDER_DESC)">&#9660;</a> <a href="#"
+          <th>Count <a
+                       @click="sortStatistics(ORDER_BY_COUNT, SORT_ORDER_DESC)">&#9660;</a> <a
                                                                                                @click="sortStatistics(ORDER_BY_COUNT, SORT_ORDER_ASC)">&#9650;</a>
           </th>
-          <th>Total [ms] <a href="#"
-                            @click="sortStatistics(ORDER_BY_TOTAL, SORT_ORDER_DESC)">&#9660;</a> <a href="#"
+          <th>Total [ms] <a
+                            @click="sortStatistics(ORDER_BY_TOTAL, SORT_ORDER_DESC)">&#9660;</a> <a
                                                                                                     @click="sortStatistics(ORDER_BY_TOTAL, SORT_ORDER_ASC)">&#9650;</a>
           </th>
-          <th>Max [ms] <a href="#"
-                          @click="sortStatistics(ORDER_BY_MAX, SORT_ORDER_DESC)">&#9660;</a> <a href="#"
+          <th>Max [ms] <a
+                          @click="sortStatistics(ORDER_BY_MAX, SORT_ORDER_DESC)">&#9660;</a> <a
                                                                                                 @click="sortStatistics(ORDER_BY_MAX, SORT_ORDER_ASC)">&#9650;</a>
           </th>
-          <th>Average [ms] <a href="#"
-                              @click="sortStatistics(ORDER_BY_AVERAGE, SORT_ORDER_DESC)">&#9660;</a> <a href="#"
+          <th>Average [ms] <a
+                              @click="sortStatistics(ORDER_BY_AVERAGE, SORT_ORDER_DESC)">&#9660;</a> <a
                                                                                                         @click="sortStatistics(ORDER_BY_AVERAGE, SORT_ORDER_ASC)">&#9650;</a>
           </th>
           <th>Percentile {{advancedmetrics.percentileValuesLabelArr[0]}}</th>
@@ -73,7 +73,7 @@
 <script>
 
   import {timer, BehaviorSubject,} from 'rxjs';
-  import {switchMap, combineLatest} from 'rxjs/operators';
+  import {switchMap, combineLatest, map} from 'rxjs/operators';
 
   export default {
     created() {
@@ -174,6 +174,12 @@
         });
       },
 
+      sortExceptions(excLabelValArr){
+        return excLabelValArr.sort((v1, v2)=>{
+          return v2.value - v1.value;
+        });
+      },
+
       createStatsSubscription() {
         const vm = this;
         return this.orderStatsDataSubject.asObservable()
@@ -205,7 +211,8 @@
         return timer(0, 5000).pipe(
           switchMap(() => {
             return vm.fetchExceptionsData();
-          })
+          }),
+          map(vm.sortExceptions)
         )
           .subscribe({
             next: exceptions => {
