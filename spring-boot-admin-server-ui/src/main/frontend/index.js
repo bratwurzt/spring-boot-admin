@@ -25,6 +25,7 @@ import sbaShell from './shell';
 import Store from './store';
 import ViewRegistry from './viewRegistry';
 import views from './views';
+import {i18n} from './i18nTranslations';
 
 moment.locale(window.navigator.language);
 Vue.use(VueRouter);
@@ -33,6 +34,7 @@ Vue.use(components);
 const applicationStore = new Store();
 const viewRegistry = new ViewRegistry();
 
+console.log('iiii',i18n)
 const installables = [
   Notifications,
   ...views,
@@ -45,8 +47,8 @@ installables.forEach(view => view.install({
   applicationStore,
   vue: Vue
 }));
-
 new Vue({
+  i18n,
   router: new VueRouter({
     linkActiveClass: 'is-active',
     routes: viewRegistry.routes
