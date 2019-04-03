@@ -34,7 +34,6 @@ Vue.use(components);
 const applicationStore = new Store();
 const viewRegistry = new ViewRegistry();
 
-console.log('iiii',i18n)
 const installables = [
   Notifications,
   ...views,
@@ -88,3 +87,5 @@ new Vue({
     applicationStore.removeEventListener('error', this.onError)
   }
 });
+
+console.log('cc',Vue.prototype.$i18n);

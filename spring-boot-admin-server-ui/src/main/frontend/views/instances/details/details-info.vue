@@ -15,13 +15,13 @@
   -->
 
 <template>
-  <sba-panel title="Info">
+  <sba-panel :title="$t('view.instances.details_info.title')">
     <div>
       <div v-if="error" class="message is-warning">
         <div class="message-body">
           <strong>
             <font-awesome-icon class="has-text-warning" icon="exclamation-triangle"/>
-            Fetching live info failed. This is the last known information.
+            {{$t('view.instances.details_info.fetching_info_failed')}}
           </strong>
           <p v-text="error.message"/>
         </div>
@@ -35,7 +35,7 @@
             </td>
           </tr>
         </table>
-        <p v-else class="is-muted">No info provided.</p>
+        <p v-else class="is-muted">{{$t('view.instances.details_info.no_info')}}</p>
       </div>
     </div>
   </sba-panel>
