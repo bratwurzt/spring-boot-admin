@@ -29,7 +29,8 @@
       <div class="navbar-menu" :class="{'is-active' : showMenu}">
         <div class="navbar-end">
           <router-link class="navbar-item" v-for="view in enabledViews" :to="{name: view.name}" :key="view.name">
-            <component :is="view.handle" :applications="applications" :error="error"/>
+            <span v-if="!view.handle.props">{{$t('menu.'+view.name)}}</span>
+            <component v-else :is="view.handle" :applications="applications" :error="error"/>
           </router-link>
 
           <div class="navbar-item has-dropdown is-hoverable" v-if="userName">
@@ -44,6 +45,17 @@
                     <font-awesome-icon icon="sign-out-alt"/>&nbsp;Log out
                   </button>
                 </form>
+              </a>
+            </div>
+          </div>
+
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              <span>{{$i18n.locale}}</span>&nbsp;
+            </a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item" v-for="lang in $i18n.availableLocales" v-on:click="setLanguage(lang)" v-if="lang !== $i18n.locale">
+                {{lang}}
               </a>
             </div>
           </div>
@@ -81,6 +93,12 @@
       error: {
         type: null,
         default: null
+      }
+    },
+    methods:{
+      setLanguage: function (lang) {
+        console.log('lang-', lang);
+        this.$i18n.locale = lang;
       }
     },
     computed: {

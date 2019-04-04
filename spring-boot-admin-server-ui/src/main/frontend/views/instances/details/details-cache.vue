@@ -15,13 +15,13 @@
   -->
 
 <template>
-  <sba-panel :title="`Cache: ${cacheName}`" v-if="hasLoaded">
+  <sba-panel :title="$t('view.instances.details_cache.title')+`: ${cacheName}`" v-if="hasLoaded">
     <div>
       <div v-if="error" class="message is-danger">
         <div class="message-body">
           <strong>
             <font-awesome-icon class="has-text-danger" icon="exclamation-triangle"/>
-            Fetching cache metrics failed.
+            {{$t('view.instances.details_cache.fetching_cache_failed')}}
           </strong>
           <p v-text="error.message"/>
         </div>
@@ -29,25 +29,25 @@
       <div class="level cache-current" v-if="current">
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading has-bullet has-bullet-info">Hits</p>
+            <p class="heading has-bullet has-bullet-info">{{$t('view.instances.details_cache.hits')}}</p>
             <p v-text="current.hit"/>
           </div>
         </div>
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading has-bullet has-bullet-warning">Misses</p>
+            <p class="heading has-bullet has-bullet-warning">{{$t('view.instances.details_cache.misses')}}</p>
             <p v-text="current.miss"/>
           </div>
         </div>
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading">Hit ratio</p>
+            <p class="heading">{{$t('view.instances.details_cache.hit_ratio')}}</p>
             <p v-text="ratio"/>
           </div>
         </div>
         <div v-if="current.size" class="level-item has-text-centered">
           <div>
-            <p class="heading">Size</p>
+            <p class="heading">{{$t('view.instances.details_cache.size')}}</p>
             <p v-text="current.size"/>
           </div>
         </div>
