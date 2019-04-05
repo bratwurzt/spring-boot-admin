@@ -3,31 +3,31 @@
 
   <div class="section">
     <div class="container">
-      <h1 class="title">Statistics </h1>
+      <h1 class="title">{{$t('custom.statistics_endpoint.stats.title')}} </h1>
 
       <table class="table is-fullwidth">
         <thead>
         <tr>
-          <th>Path</th>
-          <th>Count <a
+          <th>{{$t('custom.statistics_endpoint.stats.table.path')}}</th>
+          <th>{{$t('custom.statistics_endpoint.stats.table.count')}} <a
                        @click="sortStatistics(ORDER_BY_COUNT, SORT_ORDER_DESC)">&#9660;</a> <a
                                                                                                @click="sortStatistics(ORDER_BY_COUNT, SORT_ORDER_ASC)">&#9650;</a>
           </th>
-          <th>Total [ms] <a
+          <th>{{$t('custom.statistics_endpoint.stats.table.total_ms')}} <a
                             @click="sortStatistics(ORDER_BY_TOTAL, SORT_ORDER_DESC)">&#9660;</a> <a
                                                                                                     @click="sortStatistics(ORDER_BY_TOTAL, SORT_ORDER_ASC)">&#9650;</a>
           </th>
-          <th>Max [ms] <a
+          <th>{{$t('custom.statistics_endpoint.stats.table.max_ms')}} <a
                           @click="sortStatistics(ORDER_BY_MAX, SORT_ORDER_DESC)">&#9660;</a> <a
                                                                                                 @click="sortStatistics(ORDER_BY_MAX, SORT_ORDER_ASC)">&#9650;</a>
           </th>
-          <th>Average [ms] <a
+          <th>{{$t('custom.statistics_endpoint.stats.table.avg_ms')}} <a
                               @click="sortStatistics(ORDER_BY_AVERAGE, SORT_ORDER_DESC)">&#9660;</a> <a
                                                                                                         @click="sortStatistics(ORDER_BY_AVERAGE, SORT_ORDER_ASC)">&#9650;</a>
           </th>
-          <th>Percentile {{advancedmetrics.percentileValuesLabelArr[0]}}</th>
-          <th>Percentile {{advancedmetrics.percentileValuesLabelArr[1]}}</th>
-          <th>Percentile {{advancedmetrics.percentileValuesLabelArr[2]}}</th>
+          <th>{{$t('custom.statistics_endpoint.stats.table.percentile')}} {{advancedmetrics.percentileValuesLabelArr[0]}}</th>
+          <th>{{$t('custom.statistics_endpoint.stats.table.percentile')}} {{advancedmetrics.percentileValuesLabelArr[1]}}</th>
+          <th>{{$t('custom.statistics_endpoint.stats.table.percentile')}} {{advancedmetrics.percentileValuesLabelArr[2]}}</th>
         </tr>
         </thead>
         <tbody>
@@ -48,13 +48,13 @@
     </div>
 
     <div class="container exceptions-w">
-      <h1 class="title">Exceptions</h1>
+      <h1 class="title">{{$t('custom.statistics_endpoint.exceptions.title')}}</h1>
 
       <table class="table">
         <thead>
         <tr>
-          <th>Exception</th>
-          <th>Count</th>
+          <th>{{$t('custom.statistics_endpoint.exceptions.table.exception')}}</th>
+          <th>{{$t('custom.statistics_endpoint.exceptions.table.count')}}</th>
         </tr>
         </thead>
         <tbody>

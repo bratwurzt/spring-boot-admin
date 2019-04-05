@@ -87,5 +87,3 @@ new Vue({
     applicationStore.removeEventListener('error', this.onError)
   }
 });
-
-console.log('cc',Vue.prototype.$i18n);

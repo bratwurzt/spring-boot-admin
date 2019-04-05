@@ -1,9 +1,23 @@
 export const messages = {
   'en': {
-    'menu.wallboard': 'wbrd',
-    'menu.journal': 'jrnl',
-    'menu.about': 'abt',
-    'menu.applications': 'apps',
+    'menu.wallboard': 'wallboard',
+    'menu.journal': 'journal',
+    'menu.about': 'about',
+    'menu.applications': 'applications',
+
+    'menu.sidebar.Details': 'Details',
+    'menu.sidebar.Statistics': 'Statistics',
+
+    'custom.statistics_endpoint.stats.title': 'Stats title',
+    'custom.statistics_endpoint.stats.table.path': 'Path',
+    'custom.statistics_endpoint.stats.table.count': 'Count',
+    'custom.statistics_endpoint.stats.table.total_ms': 'Total [ms]',
+    'custom.statistics_endpoint.stats.table.max_ms': 'Max [ms]',
+    'custom.statistics_endpoint.stats.table.avg_ms': 'Average [ms]',
+    'custom.statistics_endpoint.stats.table.percentile': 'Percentile',
+    'custom.statistics_endpoint.exceptions.title': 'Exceptions',
+    'custom.statistics_endpoint.exceptions.table.exception': 'Exception',
+    'custom.statistics_endpoint.exceptions.table.count': 'Count',
 
     'view.applications.header.applications': 'Applications',
     'view.applications.header.server_conn_failed': 'Server connection failed.',
