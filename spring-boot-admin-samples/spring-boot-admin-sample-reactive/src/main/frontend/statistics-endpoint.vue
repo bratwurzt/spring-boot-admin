@@ -5,6 +5,9 @@
     <div class="container">
       <h1 class="title">{{$t('custom.statistics_endpoint.stats.title')}} </h1>
 
+      <errors-chart :title="$t('custom.statistics_endpoint.exceptions.chart.title')"></errors-chart>
+      <avg-resp :title="$t('custom.statistics_endpoint.max_average_response.chart.title')"></avg-resp>
+
       <table class="table is-fullwidth">
         <thead>
         <tr>
@@ -72,8 +75,55 @@
 
 <script>
 
-  import {timer, BehaviorSubject,} from 'rxjs';
-  import {switchMap, combineLatest, map} from 'rxjs/operators';
+  import {timer, BehaviorSubject} from 'rxjs';
+  import {switchMap, combineLatest, map, concatMap} from 'rxjs/operators';
+  import errorsChart from './errors-chart';
+  import avgResp from './modules-avg-response-chart';
+  import moment from 'moment';
+
+  class Trace {
+    constructor({timestamp, ...trace}) {
+      Object.assign(this, trace);
+      this.timestamp = moment(timestamp);
+    }
+
+    get key() {
+      return `${this.timestamp}-${this.request.method}-${this.request.uri}`;
+    }
+
+    get contentLength() {
+      const contentLength = this.response.headers['Content-Length'] && this.response.headers['Content-Length'][0];
+      if (contentLength && /^\d+$/.test(contentLength)) {
+        return parseInt(contentLength);
+      }
+      return null;
+    }
+
+    get contentType() {
+      const contentType = this.response.headers['Content-Type'] && this.response.headers['Content-Type'][0];
+      if (contentType) {
+        const idx = contentType.indexOf(';');
+        return idx >= 0 ? contentType.substring(0, idx) : contentType;
+      }
+      return null;
+    }
+
+    compareTo(other) {
+      return this.timestamp - other.timestamp;
+    }
+
+    isSuccess() {
+      return this.response.status <= 399
+    }
+
+    isClientError() {
+      return this.response.status >= 400 && this.response.status <= 499
+    }
+
+    isServerError() {
+      return this.response.status >= 500 && this.response.status <= 599
+    }
+  }
 
   export default {
     created() {
@@ -82,10 +132,14 @@
     beforeDestroy() {
       this.unsubscribe();
     },
+    components: {
+      errorsChart,
+      avgResp
+    },
     props: {
       instance: {
-        type: Array,
-        default: () => []
+        type: Object,
+        default: () => {}
       }
     },
     data: () => ({
@@ -128,8 +182,6 @@
         if (sortOrder) {
           reqUrl += '&asc=' + (sortOrder === this.SORT_ORDER_ASC).toString();
         }
-
-        //console.log('stats req=', reqUrl);
 
         var response = await this.instance.axios.get(reqUrl, {
           headers: {'Accept': ['application/json']}
@@ -226,9 +278,10 @@
       },
 
       async subscribe() {
+
         if (!this.subscriptions.length) {
-          this.subscriptions.push(await this.createStatsSubscription());
-          this.subscriptions.push(await this.createExceptionsSubscription());
+          /* this.subscriptions.push(await this.createStatsSubscription());
+          this.subscriptions.push(await this.createExceptionsSubscription());*/
         }
       },
 

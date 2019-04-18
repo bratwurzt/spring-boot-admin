@@ -18,6 +18,8 @@ export const messages = {
     'custom.statistics_endpoint.exceptions.title': 'Exceptions',
     'custom.statistics_endpoint.exceptions.table.exception': 'Exception',
     'custom.statistics_endpoint.exceptions.table.count': 'Count',
+    'custom.statistics_endpoint.exceptions.chart.title': 'Exceptions chart',
+    'custom.statistics_endpoint.max_average_response.chart.title': 'Exceptions chart',
 
     'view.applications.header.applications': 'Applications',
     'view.applications.header.server_conn_failed': 'Server connection failed.',
