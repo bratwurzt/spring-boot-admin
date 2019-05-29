@@ -20,34 +20,10 @@
          v-if="tooltipSelection && tooltipContent.length"
          :class="`trace-chart__tooltip--${this.x(tooltipSelection[0]) > this.width / 2 ? 'left' : 'right'}`">
       <table class="is-narrow is-size-7">
-        <!--<tr>
-          <th>{{yAxisValueTooltipLabel}}</th>
-          <td v-text="tooltipContent.yAxisValue"/>
-        </tr>-->
         <tr v-for="valueItem in tooltipContent">
-          <th>{{valueItem.label}}</th>
+          <th>{{getOverlayTitle(valueItem.label)}}</th>
           <td v-text="valueItem.value"/>
         </tr>
-        <!--<tr>
-          <th>successful</th>
-          <td v-text="tooltipContent.totalSuccess"/>
-        </tr>
-        <tr>
-          <th>status 4xx</th>
-          <td v-text="tooltipContent.totalClientErrors"/>
-        </tr>
-        <tr>
-          <th>status 5xx</th>
-          <td v-text="tooltipContent.totalServerErrors"/>
-        </tr>
-        <tr>
-          <th>max duration</th>
-          <td v-text="`${tooltipContent.maxTime}ms`"/>
-        </tr>
-        <tr>
-          <th>ø duration</th>
-          <td v-text="`${tooltipContent.avgTime}ms`"/>
-        </tr>-->
       </table>
     </div>
     <svg class="trace-chart__svg"/>
@@ -65,10 +41,6 @@
       traces: {
         type: Array,
         default: () => []
-      },
-      yAxisValueTooltipLabel: {
-        type: String,
-        default: ()=>{return 'total';}
       },
       groupTracesFn: {
         type: Function,
@@ -99,11 +71,6 @@
             timeEnd: time + interval,
             yAxisValue: 0,
             traces: []
-            /*totalSuccess: 0,
-            totalClientErrors: 0,
-            totalServerErrors: 0,
-            totalTime: 0,
-            maxTime: 0*/
           };
           const tracesInCurrentInterval = [];
 
@@ -135,18 +102,18 @@
 
           if (this.groupTracesFn) {
             return this.groupTracesFn(selectedBuckets);
-          } /*else {
-            return selectedBuckets.reduce(
-              (current, next) => ([{
-                label: 'total',
-                value: current.yAxisValue + next.yAxisValue
-              }]), []);
-          }*/
+          }
         }
         return [];
       }
     },
     methods: {
+      getOverlayTitle(labelIdent){
+        if(this.$te('custom.statistics_endpoint.chart_overlay.title.'+labelIdent)){
+          return this.$t('custom.statistics_endpoint.chart_overlay.title.' + labelIdent);
+        }
+        return labelIdent;
+      },
       drawChart(data) {
         const vm = this;
 

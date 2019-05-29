@@ -5,7 +5,7 @@
     <div class="container">
       <h1 class="title">{{$t('custom.statistics_endpoint.stats.title')}} </h1>
 
-      <errors-chart :title="$t('custom.statistics_endpoint.exceptions.chart.title')"></errors-chart>
+      <errors-chart :title="$t('custom.statistics_endpoint.exceptions.chart.title')" poll-url="testUrl" poll-interval="3000"></errors-chart>
       <avg-resp :title="$t('custom.statistics_endpoint.max_average_response.chart.title')"></avg-resp>
 
       <table class="table is-fullwidth">
@@ -76,7 +76,7 @@
 <script>
 
   import {timer, BehaviorSubject} from 'rxjs';
-  import {switchMap, combineLatest, map, concatMap} from 'rxjs/operators';
+  import {switchMap, combineLatest, map} from 'rxjs/operators';
   import errorsChart from './errors-chart';
   import avgResp from './modules-avg-response-chart';
   import moment from 'moment';

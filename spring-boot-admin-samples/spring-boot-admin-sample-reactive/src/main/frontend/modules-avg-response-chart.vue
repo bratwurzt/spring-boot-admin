@@ -85,11 +85,11 @@
         const vm = this;
         vm.lastTimestamp = moment(0);
         vm.error = null;
-        return timer(0, 5000)
+        return timer(0, 3000)
           .pipe(map(() => {
             const now = new Date();
             let reqData = {
-              "values": [{"label": "module1", "value": Math.floor(Math.random() * 10)},{"label": "maodule2", "value": Math.floor(Math.random() * 100)}],
+              "values": [{"label": "module1", "value": Math.floor(Math.random() * 10)},{"label": "module2", "value": Math.floor(Math.random() * 100)}],
               "timestamp": (new Date(now.getTime() - 1000)).toISOString()
             };
 

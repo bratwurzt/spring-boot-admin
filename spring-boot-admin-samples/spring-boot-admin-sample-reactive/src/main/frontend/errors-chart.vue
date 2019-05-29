@@ -1,7 +1,7 @@
 <template>
   <div>
     <h5 class="title">{{title}}</h5>
-    <traces-chart :traces="exceptionTraces" :groupTracesFn = "groupTracesFn" :chartValueFn="getChartValue"></traces-chart>
+    <traces-chart :traces="exceptionTraces" :groupTracesFn="groupTracesFn" :chartValueFn="getChartValue"></traces-chart>
   </div>
 
 </template>
@@ -42,16 +42,34 @@
       title: {
         type: String,
         default: () => ''
+      },
+      pollUrl: {
+        type: String,
+        default: () => ''
+      },
+      pollInterval: {
+        type: Number,
+        default: () => 3000
       }
     },
     data: () => ({
       exceptionTraces: [],
-      subscriptions: []
+      subscriptions: [],
+      totalLabelIdent: 'total',
+      allData:[]
     }),
     methods: {
 
       getChartValue(tracesInTimePeriodArr) {
-        tracesInTimePeriodArr.length
+        var periodValues = tracesInTimePeriodArr.map(tPeriod => tPeriod.values);
+        var totalSum = 0;
+        periodValues.forEach((tracesArr) => {
+          tracesArr.find((trace) => {
+            trace.label === this.totalLabelIdent;
+            totalSum += trace.value;
+          });
+        });
+        return totalSum;
       },
 
       groupTracesFn(timeIntervalBuckets) {
@@ -59,17 +77,19 @@
         return timeIntervalTraces.reduce(
           (currentTotalsLabelsValuesArr, currTimeIntervalTracesArr) => {
 
-            currTimeIntervalTracesArr.map(trV => trV.values)
-              .map( (traceLabelValuesArr) => {
-                traceLabelValuesArr.forEach(labelVal => {
+            if(currTimeIntervalTracesArr){
+              currTimeIntervalTracesArr.map((traceLabelValuesArr) => {
+                traceLabelValuesArr.values.forEach(labelVal => {
                   let totalObjectForLabel = currentTotalsLabelsValuesArr.find(totLabVal => totLabVal.label === labelVal.label);
-                  if(!totalObjectForLabel){
+                  if (!totalObjectForLabel) {
                     totalObjectForLabel = {label: labelVal.label, value: 0};
                     currentTotalsLabelsValuesArr.push(totalObjectForLabel);
                   }
-                  totalObjectForLabel.value = Math.max(totalObjectForLabel.value , labelVal.value);
+                  totalObjectForLabel.value = totalObjectForLabel.value + labelVal.value;
                 });
               });
+            }
+
             return currentTotalsLabelsValuesArr;
           }, []);
       },
@@ -78,12 +98,22 @@
         const vm = this;
         vm.lastTimestamp = moment(0);
         vm.error = null;
-        return timer(0, 5000)
+        return timer(0, this.pollInterval)
           .pipe(map(() => {
             const now = new Date();
+
+            var mockResponse = [
+              {
+                timestamp: (new Date(now.getTime() - 1000)).toISOString()
+                ,
+                'values': [{'label': this.totalLabelIdent, 'value': 0}]
+              }
+            ];
+
+
             let reqData = {
-              "values": [{"label": "module1", "value": Math.floor(Math.random() * 10)},{"label": "maodule2", "value": Math.floor(Math.random() * 100)}],
-              "timestamp": (new Date(now.getTime() - 1000)).toISOString()
+              "timestamp": (new Date(now.getTime() - 1000)).toISOString(),
+              'values': [{'label': this.totalLabelIdent, 'value': 0}]
             };
 
             const nr = Math.floor(Math.random() * 10);
@@ -94,7 +124,7 @@
               d.index = i;
               mockRes.push(new Trace(d))
             }
-            return mockRes
+            return mockRes;
           }))
           .subscribe({
             next: traces => {

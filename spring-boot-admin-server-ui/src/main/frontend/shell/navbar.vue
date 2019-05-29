@@ -97,7 +97,6 @@
     },
     methods:{
       setLanguage: function (lang) {
-        console.log('lang-', lang);
         this.$i18n.locale = lang;
       }
     },
