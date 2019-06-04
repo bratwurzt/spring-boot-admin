@@ -42,7 +42,7 @@
         >
           <router-link
             :to="{ name: group.views[0].name, params: { 'instanceId' : instance.id } }"
-            v-text="hasMultipleViews(group) ? group.name : group.views[0].label"
+            v-text="getSidebarTranslatedText( hasMultipleViews(group) ? group.name : group.views[0].label )"
             active-class=""
             exact-active-class=""
             :class="{'is-active' : isActiveGroup(group) }"
@@ -56,7 +56,8 @@
               :key="view.name"
             >
               <router-link :to="{ name: view.name, params: { 'instanceId' : instance.id } }">
-                <component :is="view.handle" />
+                <span v-if="$i18n.te('menu.sidebar.'+view.handle, $i18n.locale)">{{$t('menu.sidebar.'+view.handle)}}</span>
+                <component v-else :is="view.handle"/>
               </router-link>
             </li>
           </ul>
@@ -121,6 +122,13 @@
       }
     },
     methods: {
+      getSidebarTranslatedText(title){
+        let dictKey = 'menu.sidebar.'+title;
+        if ( this.$i18n.te(dictKey, this.$i18n.locale) ){
+          return this.$i18n.t(dictKey);
+        }
+        return title;
+      },
       isActiveGroup(group) {
         return group.views.includes(this.$route.meta.view);
       },

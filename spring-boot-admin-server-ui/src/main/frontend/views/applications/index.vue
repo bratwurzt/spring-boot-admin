@@ -23,8 +23,8 @@
       <div v-if="error" class="message is-warning">
         <div class="message-body">
           <strong>
-            <font-awesome-icon class="has-text-warning" icon="exclamation-triangle" />
-            Server connection failed.
+            <font-awesome-icon class="has-text-warning" icon="exclamation-triangle"/>
+            {{$t('view.applications.header.server_conn_failed')}}
           </strong>
           <p v-text="error.message" />
         </div>
@@ -32,12 +32,10 @@
       <template v-if="applicationsInitialized">
         <applications-stats :applications="applications" />
         <div class="application-group" v-for="group in statusGroups" :key="group.status">
-          <p class="heading" v-text="group.status" />
+          <p class="heading" v-text="$t('view.applications.list_title.status.' + group.status)" />
           <applications-list :applications="group.applications" :selected="selected" />
         </div>
-        <p v-if="statusGroups.length === 0" class="is-muted">
-          No applications registered.
-        </p>
+        <p v-if="statusGroups.length === 0" class="is-muted">{{$t('view.applications.header.none_registered')}}</p>
       </template>
     </div>
   </section>

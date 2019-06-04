@@ -15,18 +15,18 @@
   -->
 
 <template>
-  <sba-panel title="Health">
+  <sba-panel :title="$t('view.instances.details_health.title')">
     <div>
       <div v-if="error" class="message is-warning">
         <div class="message-body">
           <strong>
-            <font-awesome-icon class="has-text-warning" icon="exclamation-triangle" />
-            Fetching live health status failed. This is the last known information.
+            <font-awesome-icon class="has-text-warning" icon="exclamation-triangle"/>
+            {{$t('view.instances.details_health.fetching_health_failed')}}
           </strong>
-          <p v-text="error.message" />
+          <p v-text="error.message"/>
         </div>
       </div>
-      <health-details name="Instance" :health="health" />
+      <health-details :name="$t('view.instances.details_health.health_details_name_instance')" :health="health"/>
     </div>
   </sba-panel>
 </template>
@@ -36,13 +36,13 @@
   import healthDetails from './health-details';
 
   export default {
+    components: {healthDetails},
     props: {
       instance: {
         type: Instance,
         required: true
       }
     },
-    components: {healthDetails},
     data: () => ({
       error: null,
       liveHealth: null,

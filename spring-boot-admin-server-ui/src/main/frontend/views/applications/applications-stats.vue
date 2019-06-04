@@ -18,38 +18,24 @@
   <div class="level">
     <div class="level-item has-text-centered">
       <div>
-        <p class="heading">
-          Applications
-        </p>
-        <p class="title" v-text="applicationsCount">
-          1
-        </p>
+        <p class="heading">{{$t('view.applications.header.applications')}}</p>
+        <p class="title" v-text="applicationsCount">1</p>
       </div>
     </div>
     <div class="level-item has-text-centered">
       <div>
-        <p class="heading">
-          Instances
-        </p>
-        <p class="title" v-text="instancesCount">
-          1
-        </p>
+        <p class="heading">{{$t('view.applications.header.instances')}}</p>
+        <p class="title" v-text="instancesCount">1</p>
       </div>
     </div>
     <div class="level-item has-text-centered">
       <div v-if="downCount === 0">
-        <p class="heading">
-          Status
-        </p>
-        <p class="title has-text-success">
-          all up
-        </p>
+        <p class="heading">{{$t('view.applications.header.status')}}</p>
+        <p class="title has-text-success">{{$t('view.applications.header.status.allup')}}</p>
       </div>
       <div v-else>
-        <p class="heading">
-          instances down
-        </p>
-        <p class="title has-text-danger" v-text="downCount" />
+        <p class="heading">{{$t('view.applications.header.status.instances_down')}}</p>
+        <p class="title has-text-danger" v-text="downCount"/>
       </div>
     </div>
   </div>
