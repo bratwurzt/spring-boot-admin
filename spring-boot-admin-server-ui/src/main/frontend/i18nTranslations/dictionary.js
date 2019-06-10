@@ -20,6 +20,7 @@ export const messages = {
     'custom.statistics_endpoint.exceptions.table.count': 'Count',
 
     'view.applications.header.applications': 'Applications',
+    'view.applications.header.applications-loading': 'Loading applications...',
     'view.applications.header.server_conn_failed': 'Server connection failed.',
     'view.applications.header.instances': 'Instances',
     'view.applications.header.status': 'Status',
@@ -115,6 +116,7 @@ export const messages = {
     'custom.statistics_endpoint.exceptions.table.count': 'Подсчет',
 
     'view.applications.header.applications': 'Приложения',
+    'view.applications.header.applications-loading': 'Запуск приложений…',
     'view.applications.header.server_conn_failed': 'Сбой подключения к серверу',
     'view.applications.header.instances': 'Экземпляры',
     'view.applications.header.status': 'Статус',

@@ -18,7 +18,7 @@
   <section class="section">
     <div class="container">
       <p v-if="!applicationsInitialized" class="is-muted is-loading">
-        Loading applications...
+        {{$t('view.applications.header.applications-loading')}}
       </p>
       <div v-if="error" class="message is-warning">
         <div class="message-body">
