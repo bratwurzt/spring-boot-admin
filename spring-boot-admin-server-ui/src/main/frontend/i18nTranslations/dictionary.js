@@ -18,12 +18,12 @@ export const messages = {
     'custom.statistics_endpoint.exceptions.title': 'Exceptions',
     'custom.statistics_endpoint.exceptions.table.exception': 'Exception',
     'custom.statistics_endpoint.exceptions.table.count': 'Count',
-    'custom.statistics_endpoint.exceptions.chart.title': 'Exceptions',
-    'custom.statistics_endpoint.max_average_response.chart.title': 'Max Average Response',
+    'custom.statistics_endpoint.exceptions.chart.title': 'Total Exceptions',
+    'custom.statistics_endpoint.total_requests.chart.title': 'Total Requests',
+    'custom.statistics_endpoint.api_logs.chart.title': 'Total API Logs',
+    'custom.statistics_endpoint.max_average_response.chart.title': 'Max Average Response Time',
 
-    'custom.statistics_endpoint.chart_overlay.title.total': 'Total exceptions',
-    'custom.statistics_endpoint.chart_overlay.title.module1': 'Component 1',
-    'custom.statistics_endpoint.chart_overlay.title.module2': 'Component 2',
+    'custom.statistics_endpoint.chart_overlay.title.total': 'Total',
 
     'view.applications.header.applications': 'Applications',
     'view.applications.header.server_conn_failed': 'Server connection failed.',

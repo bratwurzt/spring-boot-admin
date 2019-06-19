@@ -50,13 +50,17 @@
       pollInterval: {
         type: Number,
         default: () => 3000
+      },
+      exceptionTraces: {
+        type: Array,
+        default: []
       }
     },
     data: () => ({
       exceptionTraces: [],
       subscriptions: [],
       totalLabelIdent: 'total',
-      allData:[]
+      allData: []
     }),
     methods: {
 
@@ -77,7 +81,7 @@
         return timeIntervalTraces.reduce(
           (currentTotalsLabelsValuesArr, currTimeIntervalTracesArr) => {
 
-            if(currTimeIntervalTracesArr){
+            if (currTimeIntervalTracesArr) {
               currTimeIntervalTracesArr.map((traceLabelValuesArr) => {
                 traceLabelValuesArr.values.forEach(labelVal => {
                   let totalObjectForLabel = currentTotalsLabelsValuesArr.find(totLabVal => totLabVal.label === labelVal.label);
@@ -92,57 +96,6 @@
 
             return currentTotalsLabelsValuesArr;
           }, []);
-      },
-
-      createSubscription() {
-        const vm = this;
-        vm.lastTimestamp = moment(0);
-        vm.error = null;
-        return timer(0, this.pollInterval)
-          .pipe(map(() => {
-            const now = new Date();
-
-            var mockResponse = [
-              {
-                timestamp: (new Date(now.getTime() - 1000)).toISOString()
-                ,
-                'values': [{'label': this.totalLabelIdent, 'value': 0}]
-              }
-            ];
-
-
-            let reqData = {
-              "timestamp": (new Date(now.getTime() - 1000)).toISOString(),
-              'values': [{'label': this.totalLabelIdent, 'value': 0}]
-            };
-
-            const nr = Math.floor(Math.random() * 10);
-            const mockRes = [];
-            for (var i = 0; i < nr; i++) {
-              let d = JSON.parse(JSON.stringify(reqData));
-              d.values[0].value = i + 1;
-              d.index = i;
-              mockRes.push(new Trace(d))
-            }
-            return mockRes;
-          }))
-          .subscribe({
-            next: traces => {
-              vm.hasLoaded = true;
-              vm.exceptionTraces = vm.exceptionTraces && traces.concat ? traces.concat(vm.exceptionTraces) : traces;
-            },
-            error: error => {
-              vm.hasLoaded = true;
-              console.warn('Fetching traces failed:', error);
-              vm.error = error;
-            }
-          });
-      },
-
-      async subscribe() {
-        if (!this.subscriptions.length) {
-          this.subscriptions.push(await this.createSubscription())
-        }
       },
 
       unsubscribe() {

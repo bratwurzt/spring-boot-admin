@@ -42,10 +42,13 @@
       title: {
         type: String,
         default: () => ''
+      },
+      exceptionTraces: {
+        type: Array,
+        default: () => []
       }
     },
     data: () => ({
-      exceptionTraces: [],
       subscriptions: []
     }),
     methods: {
@@ -79,47 +82,6 @@
               });
             return currentTotalsLabelsValuesArr;
           }, []);
-      },
-
-      createSubscription() {
-        const vm = this;
-        vm.lastTimestamp = moment(0);
-        vm.error = null;
-        return timer(0, 3000)
-          .pipe(map(() => {
-            const now = new Date();
-            let reqData = {
-              "values": [{"label": "module1", "value": Math.floor(Math.random() * 10)},{"label": "module2", "value": Math.floor(Math.random() * 100)}],
-              "timestamp": (new Date(now.getTime() - 1000)).toISOString()
-            };
-
-            const nr = Math.floor(Math.random() * 10);
-            const mockRes = [];
-            for (var i = 0; i < nr; i++) {
-              let d = JSON.parse(JSON.stringify(reqData));
-              d.values[0].value = i + 1;
-              d.index = i;
-              mockRes.push(new Trace(d))
-            }
-            return mockRes
-          }))
-          .subscribe({
-            next: traces => {
-              vm.hasLoaded = true;
-              vm.exceptionTraces = vm.exceptionTraces && traces.concat ? traces.concat(vm.exceptionTraces) : traces;
-            },
-            error: error => {
-              vm.hasLoaded = true;
-              console.warn('Fetching traces failed:', error);
-              vm.error = error;
-            }
-          });
-      },
-
-      async subscribe() {
-        if (!this.subscriptions.length) {
-          this.subscriptions.push(await this.createSubscription())
-        }
       },
 
       unsubscribe() {
