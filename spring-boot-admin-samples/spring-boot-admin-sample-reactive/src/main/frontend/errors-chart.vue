@@ -29,9 +29,6 @@
   }
 
   export default {
-    created() {
-      this.subscribe();
-    },
     beforeDestroy() {
       this.unsubscribe();
     },
@@ -58,9 +55,7 @@
     },
     data: () => ({
       exceptionTraces: [],
-      subscriptions: [],
-      totalLabelIdent: 'total',
-      allData: []
+      totalLabelIdent: 'total'
     }),
     methods: {
 
@@ -98,18 +93,6 @@
           }, []);
       },
 
-      unsubscribe() {
-        if (this.subscriptions.length) {
-
-          try {
-            this.subscriptions.forEach((subs) => {
-              !subs.closed && subs.unsubscribe();
-            });
-          } finally {
-            this.subscriptions.length = 0;
-          }
-        }
-      }
     }
   };
 </script>

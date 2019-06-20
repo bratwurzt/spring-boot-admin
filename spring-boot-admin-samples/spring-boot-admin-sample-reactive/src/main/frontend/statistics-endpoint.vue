@@ -213,6 +213,197 @@
         });
         var responseData = response.data;
 
+        // var responseData = {
+        //   "histogramSnapshots": [
+        //     {
+        //       "name": "/ehr/{ehrId}/work-plan/{mWorkPlanId}/state",
+        //       "histogramSnapshot": {
+        //         "percentileValues": [
+        //           {
+        //             "percentile": 0.9,
+        //             "value": 43646976
+        //           },
+        //           {
+        //             "percentile": 0.95,
+        //             "value": 46268416
+        //           },
+        //           {
+        //             "percentile": 0.99,
+        //             "value": 61997056
+        //           }
+        //         ],
+        //         "count": 637,
+        //         "total": 24198948616,
+        //         "max": 144394701,
+        //         "mean": 37988930.323
+        //       },
+        //       "currentHistogramSnapshot": {
+        //         "percentileValues": [],
+        //         "count": 2,
+        //         "total": 84260001,
+        //         "max": 0,
+        //         "mean": 42130000.5
+        //       },
+        //       "errorCount": undefined
+        //     },
+        //     {
+        //       "name": "/plan",
+        //       "histogramSnapshot": {
+        //         "percentileValues": [
+        //           {
+        //             "percentile": 0.9,
+        //             "value": 32636928
+        //           },
+        //           {
+        //             "percentile": 0.95,
+        //             "value": 39452672
+        //           },
+        //           {
+        //             "percentile": 0.99,
+        //             "value": 59899904
+        //           }
+        //         ],
+        //         "count": 640,
+        //         "total": 17097014696,
+        //         "max": 281958900,
+        //         "mean": 26714085.462
+        //       },
+        //       "currentHistogramSnapshot": {
+        //         "percentileValues": [],
+        //         "count": 2,
+        //         "total": 46178398,
+        //         "max": 0,
+        //         "mean": 23089199
+        //       },
+        //       "errorCount": 0
+        //     },
+        //     {
+        //       "name": "/ehr/{ehrId}/work-plan/instantiate",
+        //       "histogramSnapshot": {
+        //         "percentileValues": [
+        //           {
+        //             "percentile": 0.9,
+        //             "value": 49414144
+        //           },
+        //           {
+        //             "percentile": 0.95,
+        //             "value": 54394880
+        //           },
+        //           {
+        //             "percentile": 0.99,
+        //             "value": 83755008
+        //           }
+        //         ],
+        //         "count": 639,
+        //         "total": 27237479011,
+        //         "max": 2823588400,
+        //         "mean": 42625162.772
+        //       },
+        //       "currentHistogramSnapshot": {
+        //         "percentileValues": [],
+        //         "count": 2,
+        //         "total": 91601500,
+        //         "max": 0,
+        //         "mean": 45800750
+        //       },
+        //       "errorCount": 1
+        //     },
+        //     {
+        //       "name": "/ehr/{ehrId}/work-plan/materialise/{workPlanId}",
+        //       "histogramSnapshot": {
+        //         "percentileValues": [
+        //           {
+        //             "percentile": 0.9,
+        //             "value": 55836672
+        //           },
+        //           {
+        //             "percentile": 0.95,
+        //             "value": 62128128
+        //           },
+        //           {
+        //             "percentile": 0.99,
+        //             "value": 75759616
+        //           }
+        //         ],
+        //         "count": 639,
+        //         "total": 31068528452,
+        //         "max": 1019313500,
+        //         "mean": 48620545.308
+        //       },
+        //       "currentHistogramSnapshot": {
+        //         "percentileValues": [],
+        //         "count": 2,
+        //         "total": 103636299,
+        //         "max": 0,
+        //         "mean": 51818149.5
+        //       },
+        //       "errorCount": 4
+        //     },
+        //     {
+        //       "name": "/ehr/{ehrId}/work-plan/{mWorkPlanId}",
+        //       "histogramSnapshot": {
+        //         "percentileValues": [
+        //           {
+        //             "percentile": 0.9,
+        //             "value": 165150720
+        //           },
+        //           {
+        //             "percentile": 0.95,
+        //             "value": 175636480
+        //           },
+        //           {
+        //             "percentile": 0.99,
+        //             "value": 210239488
+        //           }
+        //         ],
+        //         "count": 639,
+        //         "total": 94390013898,
+        //         "max": 831860800,
+        //         "mean": 147715201.718
+        //       },
+        //       "currentHistogramSnapshot": {
+        //         "percentileValues": [],
+        //         "count": 4,
+        //         "total": 629111298,
+        //         "max": 0,
+        //         "mean": 157277824.5
+        //       },
+        //       "errorCount": 1
+        //     },
+        //     {
+        //       "name": "/ehr/{ehrId}/work-plan/{mWorkPlanId}/performer",
+        //       "histogramSnapshot": {
+        //         "percentileValues": [
+        //           {
+        //             "percentile": 0.9,
+        //             "value": 321912832
+        //           },
+        //           {
+        //             "percentile": 0.95,
+        //             "value": 332398592
+        //           },
+        //           {
+        //             "percentile": 0.99,
+        //             "value": 384827392
+        //           }
+        //         ],
+        //         "count": 637,
+        //         "total": 178577522998,
+        //         "max": 558596399,
+        //         "mean": 280341480.374
+        //       },
+        //       "currentHistogramSnapshot": {
+        //         "percentileValues": [],
+        //         "count": 2,
+        //         "total": 641360299,
+        //         "max": 0,
+        //         "mean": 320680149.5
+        //       },
+        //       "errorCount": 3
+        //     }
+        //   ]
+        // }
+
         let addKeyIdent = v => {
           v.key = Math.random();
           return v;
@@ -308,7 +499,6 @@
 
 
       async subscribe() {
-
         if (!this.subscriptions.length) {
           this.subscriptions.push(await this.createStatsSubscription());
           this.subscriptions.push(await this.createExceptionsSubscription());
@@ -346,7 +536,6 @@
               totalErrorsNr += errC;
             }
           })
-
         }
       });
 
@@ -468,5 +657,10 @@
 
   .max-avg-w .trace-chart__tooltip {
     width: 400px;
+  }
+
+  .charts-w .title{
+    margin-bottom: 0px;
+    margin-top: 40px;
   }
 </style>
