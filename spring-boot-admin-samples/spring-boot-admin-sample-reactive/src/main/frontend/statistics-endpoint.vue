@@ -343,9 +343,9 @@
       var errorsGraphArray;
 
       histogramSnapshotsArr.forEach((snapshot) => {
-        if (snapshot.errorCount) {
-          Object.keys(snapshot.errorCount).forEach((errorName)=>{
-            var errC = parseInt(snapshot.errorCount[errorName]);
+        if (snapshot.currentErrorCount) {
+          Object.keys(snapshot.currentErrorCount).forEach((errorName)=>{
+            var errC = parseInt(snapshot.currentErrorCount[errorName]);
             if (!isNaN(errC)) {
               totalErrorsNr += errC;
             }
