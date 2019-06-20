@@ -344,10 +344,13 @@
 
       histogramSnapshotsArr.forEach((snapshot) => {
         if (snapshot.errorCount) {
-          var errC = parseInt(snapshot.errorCount);
-          if (!isNaN(errC)) {
-            totalErrorsNr += errC;
-          }
+          Object.keys(snapshot.errorCount).forEach((errorName)=>{
+            var errC = parseInt(snapshot.errorCount[errorName]);
+            if (!isNaN(errC)) {
+              totalErrorsNr += errC;
+            }
+          })
+
         }
       });
 
