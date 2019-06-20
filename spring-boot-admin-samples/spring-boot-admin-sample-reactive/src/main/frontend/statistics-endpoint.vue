@@ -218,17 +218,13 @@
           return v;
         };
 
-        let nanoToMillis = (v) => {
-          return parseInt((v / 1000000).toString(10), 10);
-        };
-
         let toMilliseconds = (val) => {
           ['total', 'max', 'mean'].forEach((propName) => {
-            val.histogramSnapshot[propName] = nanoToMillis(val.histogramSnapshot[propName], 'nanoseconds');
+            val.histogramSnapshot[propName] = Utils.nanoToMillis(val.histogramSnapshot[propName], 'nanoseconds');
           });
 
           val.histogramSnapshot.percentileValues = val.histogramSnapshot.percentileValues.map((perc) => {
-            perc.value = nanoToMillis(perc.value, 'nanoseconds');
+            perc.value = Utils.nanoToMillis(perc.value, 'nanoseconds');
             return perc;
           });
           return val;
@@ -407,7 +403,7 @@
         if (snapshot.currentHistogramSnapshot && snapshot.currentHistogramSnapshot.total) {
           var currVal = parseInt(snapshot.currentHistogramSnapshot.total);
           if (!isNaN(currVal)) {
-            totalValueNr += currVal;
+            totalValueNr += currVal = Utils.nanoToMillis(currVal);
           }
         }
       });
@@ -435,6 +431,8 @@
           var currVal = parseFloat(snapshot.currentHistogramSnapshot.mean);
           if (isNaN(currVal)) {
             currVal = 0;
+          }else{
+            currVal = Utils.nanoToMillis(currVal);
           }
           currAvgGraphValues.push({"label": snapshot.name, "value": currVal, index: indx});
         }
@@ -446,6 +444,12 @@
       })];
       return currentGraphValues && reqData.concat ? reqData.concat(currentGraphValues) : reqData;
     }
+  }
+
+  class Utils{
+    static nanoToMillis (v) {
+      return parseInt((v / 1000000).toString(10), 10);
+    };
   }
 </script>
 
