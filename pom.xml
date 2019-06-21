@@ -89,6 +89,7 @@
     </licenses>
     <scm>
         <developerConnection>scm:git:git@gitlab.marand.si:thinkehr/spring-boot-admin.git</developerConnection>
+        <connection>scm:git:git@gitlab.marand.si:thinkehr/spring-boot-admin.git</connection>
     </scm>
     <developers>
         <developer>
