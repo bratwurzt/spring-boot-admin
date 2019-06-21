@@ -499,12 +499,12 @@
     </profiles>
     <distributionManagement>
         <snapshotRepository>
-            <id>plugins-snapshot-local</id>
+            <id>artifactory-snapshots</id>
             <name>plugins-snapshot-local</name>
             <url>http://artifactory.marand.si:80/artifactory/plugins-snapshot-local</url>
         </snapshotRepository>
         <repository>
-            <id>central</id>
+            <id>artifactory-releases</id>
             <name>artifactory.marand.si-releases</name>
             <url>http://artifactory.marand.si:80/artifactory/thinkehr-releases</url>
         </repository>
