@@ -15,11 +15,12 @@
   ~ limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.codecentric</groupId>
     <artifactId>spring-boot-admin</artifactId>
-    <version>2.1.2-M1</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
     <name>Spring Boot Admin</name>
     <description>Spring Boot Admin</description>
@@ -89,8 +90,7 @@
     <scm>
         <developerConnection>scm:git:git@gitlab.marand.si:thinkehr/spring-boot-admin.git</developerConnection>
         <connection>scm:git:git@gitlab.marand.si:thinkehr/spring-boot-admin.git</connection>
-      <tag>spring-boot-admin-2.1.2-M1</tag>
-  </scm>
+    </scm>
     <developers>
         <developer>
             <name>Johannes Edmeier</name>
