@@ -500,14 +500,14 @@
     </profiles>
     <distributionManagement>
         <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <id>plugins-snapshot-local</id>
+            <name>plugins-snapshot-local</name>
+            <url>http://artifactory.marand.si:80/artifactory/plugins-snapshot-local</url>
         </snapshotRepository>
         <repository>
-            <id>sonatype-nexus-staging</id>
-            <name>Nexus Release Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>central</id>
+            <name>artifactory.marand.si-releases</name>
+            <url>http://artifactory.marand.si:80/artifactory/thinkehr-releases</url>
         </repository>
     </distributionManagement>
 </project>
