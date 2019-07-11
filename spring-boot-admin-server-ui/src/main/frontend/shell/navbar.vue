@@ -42,7 +42,7 @@
                 <form action="logout" method="post">
                   <input v-if="csrfToken" type="hidden" :name="csrfParameterName" :value="csrfToken">
                   <button class="button is-icon" type="submit" value="logout">
-                    <font-awesome-icon icon="sign-out-alt" />&nbsp;Log out
+                    <font-awesome-icon icon="sign-out-alt" />&nbsp;{{$t('navbar.log_out')}}
                   </button>
                 </form>
               </a>

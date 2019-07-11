@@ -19,16 +19,16 @@
     <div>
       <div class="message is-warning">
         <div class="message-body">
-          A heap dump may contain <strong>sensitive data</strong>. Please handle with care.
+          {{$t('view.instances.heapdump.sensitive')}}
         </div>
       </div>
       <div class="message is-warning">
         <div class="message-body">
-          Dumping the heap may be expensive in terms of cpu and disk space.
+          {{$t('view.instances.heapdump.expensive')}}
         </div>
       </div>
       <a class="button is-primary" :href="`instances/${instance.id}/actuator/heapdump`" target="_blank">
-        <font-awesome-icon icon="download" />&nbsp;Download Heap Dump
+        <font-awesome-icon icon="download" />&nbsp;{{$t('view.instances.heapdump.download')}}
       </a>
     </div>
   </section>

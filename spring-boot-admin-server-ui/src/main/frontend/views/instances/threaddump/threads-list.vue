@@ -19,7 +19,7 @@
     <thead>
       <tr>
         <th class="threads__thread-name">
-          Name
+          {{$t('view.instances.threaddump.threads_list.name')}}
         </th>
         <th class="threads__timeline">
           <svg class="threads__scale" height="24px" />

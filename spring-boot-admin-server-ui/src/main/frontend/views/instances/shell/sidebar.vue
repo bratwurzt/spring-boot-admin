@@ -56,7 +56,7 @@
               :key="view.name"
             >
               <router-link :to="{ name: view.name, params: { 'instanceId' : instance.id } }">
-                <span v-if="$i18n.te('menu.sidebar.'+view.handle, $i18n.locale)">{{$t('menu.sidebar.'+view.handle)}}</span>
+                <span v-if="$i18n.te('menu.sidebar.'+view.label, $i18n.locale)">{{$t('menu.sidebar.'+view.label)}}</span>
                 <component v-else :is="view.handle"/>
               </router-link>
             </li>
@@ -124,6 +124,7 @@
     methods: {
       getSidebarTranslatedText(title){
         let dictKey = 'menu.sidebar.'+title;
+        console.log('TitleXZXX', title);
         if ( this.$i18n.te(dictKey, this.$i18n.locale) ){
           return this.$i18n.t(dictKey);
         }
