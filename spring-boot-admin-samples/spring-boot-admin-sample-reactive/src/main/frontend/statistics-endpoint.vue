@@ -88,7 +88,7 @@
 <script>
 
   import {timer, BehaviorSubject} from 'rxjs';
-  import {switchMap, combineLatest, map, scan} from 'rxjs/operators';
+  import {switchMap, combineLatest, map} from 'rxjs/operators';
   import errorsChart from './errors-chart';
   import avgResp from './modules-avg-response-chart';
   import moment from 'moment';

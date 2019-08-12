@@ -17,12 +17,12 @@
 <template>
   <div class="section">
     <div class="container">
-      <h1 class="title">{{$t('journal.title')}}</h1>
+      <h1 class="title">{{ $t('journal.title') }}</h1>
       <div v-if="error" class="message is-warning">
         <div class="message-body">
           <strong>
             <font-awesome-icon class="has-text-warning" icon="exclamation-triangle"/>
-            {{$t('journal.conn_failed')}}
+            {{ $t('journal.conn_failed') }}
           </strong>
           <p v-text="error.message"/>
         </div>
@@ -30,10 +30,10 @@
       <table class="table is-fullwidth">
         <thead>
           <tr>
-            <th>{{$t('journal.application')}}</th>
-            <th>{{$t('journal.instance')}}</th>
-            <th>{{$t('journal.time')}}</th>
-            <th>{{$t('journal.event')}}</th>
+            <th>{{ $t('journal.application') }}</th>
+            <th>{{ $t('journal.instance') }}</th>
+            <th>{{ $t('journal.time') }}</th>
+            <th>{{ $t('journal.event') }}</th>
           </tr>
         </thead>
         <tbody>

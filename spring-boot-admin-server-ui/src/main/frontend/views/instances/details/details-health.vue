@@ -21,7 +21,7 @@
         <div class="message-body">
           <strong>
             <font-awesome-icon class="has-text-warning" icon="exclamation-triangle"/>
-            {{$t('view.instances.details_health.fetching_health_failed')}}
+            {{ $t('view.instances.details_health.fetching_health_failed') }}
           </strong>
           <p v-text="error.message"/>
         </div>

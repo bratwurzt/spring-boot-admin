@@ -16,6 +16,7 @@
 
 /* global SBA */
 import statisticsEndpoint from './statistics-endpoint';
+import backupEndpoint from './backup-endpoint';
 
 // tag::customization-ui-endpoint[]
 SBA.use({
@@ -31,4 +32,20 @@ SBA.use({
     });
   }
 });
+
+SBA.use({
+  install({viewRegistry}) {
+    viewRegistry.addView({
+      name: 'instances/backup',
+      parent: 'instances', // <1>
+      path: 'backup',
+      component: backupEndpoint,
+      label: 'Backup',
+      order: 11,
+      isEnabled: ({instance}) => instance.hasEndpoint('custom') // <2>
+    });
+  }
+});
+
+
 // end::customization-ui-endpoint[]

@@ -49,7 +49,7 @@
               v-for="view in group.views"
               :key="view.name">
               <router-link :to="{ name: view.name, params: { 'instanceId' : instance.id } }">
-                <span v-if="$i18n.te('menu.sidebar.'+view.handle, $i18n.locale)">{{$t('menu.sidebar.'+view.handle)}}</span>
+                <span v-if="$i18n.te('menu.sidebar.'+view.handle, $i18n.locale)">{{ $t('menu.sidebar.'+view.handle) }}</span>
                 <component v-else :is="view.handle"/>
               </router-link>
             </li>

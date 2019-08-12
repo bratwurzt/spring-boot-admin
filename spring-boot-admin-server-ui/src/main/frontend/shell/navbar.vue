@@ -29,7 +29,7 @@
       <div class="navbar-menu" :class="{'is-active' : showMenu}">
         <div class="navbar-end">
           <router-link class="navbar-item" v-for="view in enabledViews" :to="{name: view.name}" :key="view.name">
-            <span v-if="!view.handle.props">{{$t('menu.'+view.name)}}</span>
+            <span v-if="!view.handle.props">{{ $t('menu.'+view.name) }}</span>
             <component v-else :is="view.handle" :applications="applications" :error="error"/>
           </router-link>
 
@@ -51,11 +51,11 @@
 
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">
-              <span>{{$i18n.locale}}</span>&nbsp;
+              <span>{{ $i18n.locale }}</span>&nbsp;
             </a>
             <div class="navbar-dropdown">
-              <a class="navbar-item" v-for="lang in $i18n.availableLocales" v-on:click="setLanguage(lang)" v-if="lang !== $i18n.locale">
-                {{lang}}
+              <a class="navbar-item" v-for="lang in $i18n.availableLocales" :key="lang" @click="setLanguage(lang)" v-if="lang !== $i18n.locale">
+                {{ lang }}
               </a>
             </div>
           </div>

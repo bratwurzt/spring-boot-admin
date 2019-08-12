@@ -21,7 +21,7 @@
         <div class="message-body">
           <strong>
             <font-awesome-icon class="has-text-danger" icon="exclamation-triangle"/>
-            {{$t('view.instances.details_process.fetching_process_failed')}}
+            {{ $t('view.instances.details_process.fetching_process_failed') }}
           </strong>
           <p v-text="error.message"/>
         </div>
@@ -29,13 +29,13 @@
       <div class="level">
         <div class="level-item has-text-centered" v-if="pid">
           <div>
-            <p class="heading">{{$t('view.instances.details_process.pid')}}</p>
+            <p class="heading">{{ $t('view.instances.details_process.pid') }}</p>
             <p v-text="pid"/>
           </div>
         </div>
         <div class="level-item has-text-centered" v-if="uptime">
           <div>
-            <p class="heading">{{$t('view.instances.details_process.uptime')}}</p>
+            <p class="heading">{{ $t('view.instances.details_process.uptime') }}</p>
             <p>
               <process-uptime :value="toMillis(uptime.value, uptime.baseUnit)"/>
             </p>
@@ -43,19 +43,19 @@
         </div>
         <div class="level-item has-text-centered" v-if="processCpuLoad">
           <div>
-            <p class="heading">{{$t('view.instances.details_process.cpu_proc')}}</p>
+            <p class="heading">{{ $t('view.instances.details_process.cpu_proc') }}</p>
             <p v-text="processCpuLoad.toFixed(2)"/>
           </div>
         </div>
         <div class="level-item has-text-centered" v-if="systemCpuLoad">
           <div>
-            <p class="heading">{{$t('view.instances.details_process.cpu_sys')}}</p>
+            <p class="heading">{{ $t('view.instances.details_process.cpu_sys') }}</p>
             <p v-text="systemCpuLoad.toFixed(2)"/>
           </div>
         </div>
         <div class="level-item has-text-centered" v-if="systemCpuCount">
           <div>
-            <p class="heading">{{$t('view.instances.details_process.cpus')}}</p>
+            <p class="heading">{{ $t('view.instances.details_process.cpus') }}</p>
             <p v-text="systemCpuCount"/>
           </div>
         </div>

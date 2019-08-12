@@ -21,7 +21,7 @@
         <div class="message-body">
           <strong>
             <font-awesome-icon class="has-text-warning" icon="exclamation-triangle"/>
-            {{$t('view.applications.header.server_conn_failed')}}
+            {{ $t('view.applications.header.server_conn_failed') }}
           </strong>
           <p v-text="error.message"/>
         </div>
@@ -29,23 +29,23 @@
       <div class="level applications-stats">
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading">{{$t('view.applications.header.applications')}}</p>
+            <p class="heading">{{ $t('view.applications.header.applications') }}</p>
             <p class="title" v-text="applicationsCount">1</p>
           </div>
         </div>
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading">{{$t('view.applications.header.instances')}}</p>
+            <p class="heading">{{ $t('view.applications.header.instances') }}</p>
             <p class="title" v-text="instancesCount">1</p>
           </div>
         </div>
         <div class="level-item has-text-centered">
           <div v-if="downCount === 0">
-            <p class="heading">{{$t('view.applications.header.status')}}</p>
-            <p class="title has-text-success">{{$t('view.applications.header.status.allup')}}</p>
+            <p class="heading">{{ $t('view.applications.header.status') }}</p>
+            <p class="title has-text-success">{{ $t('view.applications.header.status.allup') }}</p>
           </div>
           <div v-else>
-            <p class="heading">{{$t('view.applications.header.status.instances_down')}}</p>
+            <p class="heading">{{ $t('view.applications.header.status.instances_down') }}</p>
             <p class="title has-text-danger" v-text="downCount"/>
           </div>
         </div>
@@ -55,7 +55,7 @@
         <applications-list :applications="group.applications" :selected="selected"/>
       </div>
       <div v-if="statusGroups.length === 0">
-        <p class="is-muted">{{$t('view.applications.header.none_registered')}}</p>
+        <p class="is-muted">{{ $t('view.applications.header.none_registered') }}</p>
       </div>
     </div>
   </section>
