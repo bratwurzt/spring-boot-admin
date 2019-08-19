@@ -54,7 +54,7 @@
               <span>{{$i18n.locale}}</span>&nbsp;
             </a>
             <div class="navbar-dropdown">
-              <a class="navbar-item" v-for="lang in $i18n.availableLocales" v-on:click="setLanguage(lang)" v-if="lang !== $i18n.locale">
+              <a class="navbar-item" v-for="lang in $i18n.availableLocales" :key="lang" @click="setLanguage(lang)" v-if="lang !== $i18n.locale">
                 {{lang}}
               </a>
             </div>

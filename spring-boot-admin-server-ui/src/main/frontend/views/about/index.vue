@@ -100,8 +100,6 @@
 
 <script>
 
-  import Vue from 'vue';
-
   export default {
     data: () => ({
       // eslint-disable-next-line no-undef
