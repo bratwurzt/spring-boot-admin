@@ -134,9 +134,11 @@
           )
           .subscribe({
             next: backupData => {
-              backupData.forEach((data) => {
-                data.formattedTimestamp = moment(data.backupTimestamp);
-              })
+                if(Array.isArray(backupData)) {
+                    backupData.forEach((data) => {
+                        data.formattedTimestamp = moment(data.backupTimestamp);
+                    })
+                }
               this.backupData = backupData;
             },
             error: error => {
