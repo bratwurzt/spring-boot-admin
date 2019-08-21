@@ -6,5 +6,5 @@ Vue.use(VueI18n);
 export const i18n = new VueI18n({
   locale: 'en', // set locale
   // fallbackLocale: 'es', // set fallback locale
-  messages: require('@/messages.json')
+  messages: require("../assets/i18n/messages.json")
 });
