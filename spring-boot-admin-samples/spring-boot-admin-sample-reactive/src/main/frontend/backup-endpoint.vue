@@ -33,6 +33,12 @@
               <font-awesome-icon icon="download"/> {{$t('custom.backup_endpoint.create_new_backup')}}
             </a>
         </div>
+      <div>
+        <input type="text"  v-model="restoreId"/>
+        <a @click="restoreBackup(restoreId)" class="button is-primary">
+          <font-awesome-icon icon="redo"/> {{$t('custom.backup_endpoint.restore_by_id')}}
+        </a>
+      </div>
     </section>
 </template>
 
@@ -118,6 +124,7 @@
       },
 
       async fetchBackupData(sortBy, sortOrder) {
+          return this.backupData
         return await this.instance.axios.get('actuator/backup', {
           headers: {'Accept': ['application/json']}
         });
@@ -136,7 +143,7 @@
             next: backupData => {
                 if(Array.isArray(backupData)) {
                     backupData.forEach((data) => {
-                        data.formattedTimestamp = moment(data.backupTimestamp);
+                        data.formattedTimestamp = moment(data.backupTimestamp).format('L LT');
                     })
                 }
               this.backupData = backupData;
