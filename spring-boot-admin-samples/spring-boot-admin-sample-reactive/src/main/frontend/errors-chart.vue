@@ -29,6 +29,9 @@
   }
 
   export default {
+    created() {
+      this.subscribe();
+    },
     beforeDestroy() {
       this.unsubscribe();
     },

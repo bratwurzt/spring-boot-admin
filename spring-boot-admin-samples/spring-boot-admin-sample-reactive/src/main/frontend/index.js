@@ -18,17 +18,16 @@
 import statisticsEndpoint from './statistics-endpoint';
 import backupEndpoint from './backup-endpoint';
 
-// tag::customization-ui-endpoint[]
 SBA.use({
   install({viewRegistry}) {
     viewRegistry.addView({
-      name: 'instances/custom',
-      parent: 'instances', // <1>
+      name: 'instances/advancedmetrics',
+      parent: 'instances',
       path: 'statistics',
       component: statisticsEndpoint,
       label: 'Statistics',
       order: 10,
-      isEnabled: ({instance}) => instance.hasEndpoint('custom') // <2>
+      isEnabled: ({instance}) => instance.hasEndpoint('advancedmetrics')
     });
   }
 });
@@ -37,12 +36,12 @@ SBA.use({
   install({viewRegistry}) {
     viewRegistry.addView({
       name: 'instances/backup',
-      parent: 'instances', // <1>
+      parent: 'instances',
       path: 'backup',
       component: backupEndpoint,
       label: 'Backup',
       order: 11,
-      isEnabled: ({instance}) => instance.hasEndpoint('custom') // <2>
+      isEnabled: ({instance}) => instance.hasEndpoint('backup')
     });
   }
 });

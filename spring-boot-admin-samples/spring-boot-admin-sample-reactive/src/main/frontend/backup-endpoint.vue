@@ -16,7 +16,7 @@
                 <tbody>
                 <template v-for="bckp in backupData">
                     <tr class="">
-                        <td v-text="bckp.formattedTimestamp.format('L HH:mm:ss.SSS')"/>
+                        <td v-text="bckp.formattedTimestamp.format('L HH:mm:ss')"/>
                         <td v-text="$t('custom.backup_endpoint.table.content.status.'+bckp.status)"/>
                         <td v-text="bckp.error"/>
                         <td>
@@ -30,15 +30,17 @@
                 </tbody>
             </table>
             <a @click="createBackup()" class="button is-primary">
-              <font-awesome-icon icon="download"/> {{$t('custom.backup_endpoint.create_new_backup')}}
+                <font-awesome-icon icon="download"/>
+                {{$t('custom.backup_endpoint.create_new_backup')}}
             </a>
         </div>
-      <div>
-        <input type="text"  v-model="restoreId"/>
-        <a @click="restoreBackup(restoreId)" class="button is-primary">
-          <font-awesome-icon icon="redo"/> {{$t('custom.backup_endpoint.restore_by_id')}}
-        </a>
-      </div>
+        <div class="container">
+            <input class="topmarginpadding" type="text" v-model="restoreId"/>
+            <a @click="restoreBackup(restoreId)" class="button is-small is-primary topmarginpadding">
+                <font-awesome-icon icon="redo"/>
+                {{$t('custom.backup_endpoint.restore_by_id')}}
+            </a>
+        </div>
     </section>
 </template>
 
@@ -124,10 +126,10 @@
       },
 
       async fetchBackupData(sortBy, sortOrder) {
-          return this.backupData
-        return await this.instance.axios.get('actuator/backup', {
+        var response = await this.instance.axios.get('actuator/backup', {
           headers: {'Accept': ['application/json']}
         });
+        return response.data
       },
 
       createStatsSubscription() {
@@ -141,11 +143,9 @@
           )
           .subscribe({
             next: backupData => {
-                if(Array.isArray(backupData)) {
-                    backupData.forEach((data) => {
-                        data.formattedTimestamp = moment(data.backupTimestamp).format('L LT');
-                    })
-                }
+              backupData.forEach((data) => {
+                data.formattedTimestamp = moment(data.backupTimestamp);
+              });
               this.backupData = backupData;
             },
             error: error => {
@@ -179,5 +179,7 @@
 </script>
 
 <style>
-
+    .topmarginpadding {
+        margin-top: 30px;
+    }
 </style>

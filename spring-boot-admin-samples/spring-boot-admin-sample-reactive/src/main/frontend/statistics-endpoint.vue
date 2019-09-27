@@ -1,88 +1,90 @@
 <template>
 
-  <div class="section">
-    <div class="container">
-      <!--<h1 class="title">{{$t('custom.statistics_endpoint.stats.title')}} </h1>-->
-      <div class="charts-w">
-        <errors-chart :title="$t('custom.statistics_endpoint.exceptions.chart.title')"
-                      :exception-traces="advancedmetrics.errorsChartData"></errors-chart>
-        <errors-chart :title="$t('custom.statistics_endpoint.api_logs.chart.title')"
-                      :exception-traces="advancedmetrics.apiLogsChartData"></errors-chart>
-        <errors-chart :title="$t('custom.statistics_endpoint.total_requests.chart.title')"
-                      :exception-traces="advancedmetrics.totalRequestsChartData"></errors-chart>
-        <avg-resp class="max-avg-w" :title="$t('custom.statistics_endpoint.max_average_response.chart.title')"
-                  :exception-traces="advancedmetrics.totalMaxAvgChartData"></avg-resp>
-      </div>
+    <div class="section">
+        <div class="container">
+            <h1 class="title">{{$t('custom.statistics_endpoint.stats.title')}} </h1>
+            <div class="charts-w">
+                <errors-chart :title="$t('custom.statistics_endpoint.exceptions.chart.title')"
+                              :exception-traces="advancedmetrics.errorsChartData"></errors-chart>
+                <errors-chart :title="$t('custom.statistics_endpoint.api_logs.chart.title')"
+                              :exception-traces="advancedmetrics.apiLogsChartData"></errors-chart>
+                <errors-chart :title="$t('custom.statistics_endpoint.total_requests.chart.title')"
+                              :exception-traces="advancedmetrics.totalRequestsChartData"></errors-chart>
+                <avg-resp class="max-avg-w" :title="$t('custom.statistics_endpoint.max_average_response.chart.title')"
+                          :exception-traces="advancedmetrics.totalMaxAvgChartData"></avg-resp>
+            </div>
+            <table class="table is-fullwidth">
+                <thead>
+                <tr>
+                    <th>{{$t('custom.statistics_endpoint.stats.table.path')}}</th>
+                    <th>{{$t('custom.statistics_endpoint.stats.table.count')}}<a
+                            @click="sortStatistics(ORDER_BY_COUNT, SORT_ORDER_DESC)">&#9660;</a> <a
+                            @click="sortStatistics(ORDER_BY_COUNT, SORT_ORDER_ASC)">&#9650;</a>
+                    </th>
+                    <th>{{$t('custom.statistics_endpoint.stats.table.total_ms')}}<a
+                            @click="sortStatistics(ORDER_BY_TOTAL, SORT_ORDER_DESC)">&#9660;</a> <a
+                            @click="sortStatistics(ORDER_BY_TOTAL, SORT_ORDER_ASC)">&#9650;</a>
+                    </th>
+                    <th>{{$t('custom.statistics_endpoint.stats.table.max_ms')}}<a
+                            @click="sortStatistics(ORDER_BY_MAX, SORT_ORDER_DESC)">&#9660;</a> <a
+                            @click="sortStatistics(ORDER_BY_MAX, SORT_ORDER_ASC)">&#9650;</a>
+                    </th>
+                    <th>{{$t('custom.statistics_endpoint.stats.table.avg_ms')}}<a
+                            @click="sortStatistics(ORDER_BY_AVERAGE, SORT_ORDER_DESC)">&#9660;</a> <a
+                            @click="sortStatistics(ORDER_BY_AVERAGE, SORT_ORDER_ASC)">&#9650;</a>
+                    </th>
+                    <th>{{$t('custom.statistics_endpoint.stats.table.percentile')}} {{advancedmetrics.percentileValuesLabelArr[0]}}
+                        <a @click="sortStatistics(ORDER_BY_PERCENTILE1, SORT_ORDER_DESC)">&#9660;</a>
+                        <a @click="sortStatistics(ORDER_BY_PERCENTILE1, SORT_ORDER_ASC)">&#9650;</a>
+                    </th>
+                    <th>{{$t('custom.statistics_endpoint.stats.table.percentile')}} {{advancedmetrics.percentileValuesLabelArr[1]}}
+                        <a @click="sortStatistics(ORDER_BY_PERCENTILE2, SORT_ORDER_DESC)">&#9660;</a>
+                        <a @click="sortStatistics(ORDER_BY_PERCENTILE2, SORT_ORDER_ASC)">&#9650;</a>
+                    </th>
+                    <th>{{$t('custom.statistics_endpoint.stats.table.percentile')}} {{advancedmetrics.percentileValuesLabelArr[2]}}
+                        <a @click="sortStatistics(ORDER_BY_PERCENTILE2, SORT_ORDER_DESC)">&#9660;</a>
+                        <a @click="sortStatistics(ORDER_BY_PERCENTILE2, SORT_ORDER_ASC)">&#9650;</a>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <template v-for="metric in advancedmetrics.statistics">
+                    <tr class="" :key="metric.key">
+                        <td v-text="metric.name"/>
+                        <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.count:''"/>
+                        <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.total:''"/>
+                        <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.max:''"/>
+                        <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.mean:''"/>
+                        <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.percentileValues[0].value:''"/>
+                        <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.percentileValues[1].value:''"/>
+                        <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.percentileValues[2].value:''"/>
+                    </tr>
+                </template>
+                </tbody>
+            </table>
+        </div>
 
-      <table class="table is-fullwidth">
-        <thead>
-        <tr>
-          <th>{{$t('custom.statistics_endpoint.stats.table.path')}}</th>
-          <th>{{$t('custom.statistics_endpoint.stats.table.count')}} <a
-            @click="sortStatistics(ORDER_BY_COUNT, SORT_ORDER_DESC)">&#9660;</a> <a
-            @click="sortStatistics(ORDER_BY_COUNT, SORT_ORDER_ASC)">&#9650;</a>
-          </th>
-          <th>{{$t('custom.statistics_endpoint.stats.table.total_ms')}} <a
-            @click="sortStatistics(ORDER_BY_TOTAL, SORT_ORDER_DESC)">&#9660;</a> <a
-            @click="sortStatistics(ORDER_BY_TOTAL, SORT_ORDER_ASC)">&#9650;</a>
-          </th>
-          <th>{{$t('custom.statistics_endpoint.stats.table.max_ms')}} <a
-            @click="sortStatistics(ORDER_BY_MAX, SORT_ORDER_DESC)">&#9660;</a> <a
-            @click="sortStatistics(ORDER_BY_MAX, SORT_ORDER_ASC)">&#9650;</a>
-          </th>
-          <th>{{$t('custom.statistics_endpoint.stats.table.avg_ms')}} <a
-            @click="sortStatistics(ORDER_BY_AVERAGE, SORT_ORDER_DESC)">&#9660;</a> <a
-            @click="sortStatistics(ORDER_BY_AVERAGE, SORT_ORDER_ASC)">&#9650;</a>
-          </th>
-          <th>{{$t('custom.statistics_endpoint.stats.table.percentile')}}
-            {{advancedmetrics.percentileValuesLabelArr[0]}}
-          </th>
-          <th>{{$t('custom.statistics_endpoint.stats.table.percentile')}}
-            {{advancedmetrics.percentileValuesLabelArr[1]}}
-          </th>
-          <th>{{$t('custom.statistics_endpoint.stats.table.percentile')}}
-            {{advancedmetrics.percentileValuesLabelArr[2]}}
-          </th>
-        </tr>
-        </thead>
-        <tbody>
-        <template v-for="metric in advancedmetrics.statistics">
-          <tr class="" :key="metric.key">
-            <td v-text="metric.name"/>
-            <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.count:''"/>
-            <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.total:''"/>
-            <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.max:''"/>
-            <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.mean:''"/>
-            <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.percentileValues[0].value:''"/>
-            <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.percentileValues[1].value:''"/>
-            <td v-text="metric.histogramSnapshot?metric.histogramSnapshot.percentileValues[2].value:''"/>
-          </tr>
-        </template>
-        </tbody>
-      </table>
+        <div class="container exceptions-w">
+            <h1 class="title">{{$t('custom.statistics_endpoint.exceptions.title')}}</h1>
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>{{$t('custom.statistics_endpoint.exceptions.table.exception')}}</th>
+                    <th>{{$t('custom.statistics_endpoint.exceptions.table.count')}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <template v-for="exception in exceptions">
+                    <tr class="">
+                        <td v-text="exception.label"/>
+                        <td v-text="exception.value"/>
+                    </tr>
+                </template>
+                </tbody>
+            </table>
+        </div>
     </div>
-
-    <div class="container exceptions-w">
-      <h1 class="title">{{$t('custom.statistics_endpoint.exceptions.title')}}</h1>
-
-      <table class="table">
-        <thead>
-        <tr>
-          <th>{{$t('custom.statistics_endpoint.exceptions.table.exception')}}</th>
-          <th>{{$t('custom.statistics_endpoint.exceptions.table.count')}}</th>
-        </tr>
-        </thead>
-        <tbody>
-        <template v-for="exception in exceptions">
-          <tr class="">
-            <td v-text="exception.label"/>
-            <td v-text="exception.value"/>
-          </tr>
-        </template>
-        </tbody>
-      </table>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -162,6 +164,9 @@
       ORDER_BY_AVERAGE: 'avg',
       ORDER_BY_TOTAL: 'sum',
       ORDER_BY_MAX: 'max',
+      ORDER_BY_PERCENTILE1: 'p1',
+      ORDER_BY_PERCENTILE2: 'p2',
+      ORDER_BY_PERCENTILE3: 'p3',
       advancedmetrics: {
         statistics: [],
         percentileValuesLabelArr: [],
@@ -199,8 +204,7 @@
 
       async fetchStatisticsData(sortBy, sortOrder) {
 
-
-        let reqUrl = 'https://thinkehr4.marand.si:8865/actuator/advancedmetrics';
+        let reqUrl = 'actuator/advancedmetrics';
         if (sortBy) {
           reqUrl += '?order=' + sortBy;
         }
@@ -212,198 +216,6 @@
           headers: {'Accept': ['application/json']}
         });
         var responseData = response.data;
-
-        // var responseData = {
-        //   "histogramSnapshots": [
-        //     {
-        //       "name": "/ehr/{ehrId}/work-plan/{mWorkPlanId}/state",
-        //       "histogramSnapshot": {
-        //         "percentileValues": [
-        //           {
-        //             "percentile": 0.9,
-        //             "value": 43646976
-        //           },
-        //           {
-        //             "percentile": 0.95,
-        //             "value": 46268416
-        //           },
-        //           {
-        //             "percentile": 0.99,
-        //             "value": 61997056
-        //           }
-        //         ],
-        //         "count": 637,
-        //         "total": 24198948616,
-        //         "max": 144394701,
-        //         "mean": 37988930.323
-        //       },
-        //       "currentHistogramSnapshot": {
-        //         "percentileValues": [],
-        //         "count": 2,
-        //         "total": 84260001,
-        //         "max": 0,
-        //         "mean": 42130000.5
-        //       },
-        //       "errorCount": undefined
-        //     },
-        //     {
-        //       "name": "/plan",
-        //       "histogramSnapshot": {
-        //         "percentileValues": [
-        //           {
-        //             "percentile": 0.9,
-        //             "value": 32636928
-        //           },
-        //           {
-        //             "percentile": 0.95,
-        //             "value": 39452672
-        //           },
-        //           {
-        //             "percentile": 0.99,
-        //             "value": 59899904
-        //           }
-        //         ],
-        //         "count": 640,
-        //         "total": 17097014696,
-        //         "max": 281958900,
-        //         "mean": 26714085.462
-        //       },
-        //       "currentHistogramSnapshot": {
-        //         "percentileValues": [],
-        //         "count": 2,
-        //         "total": 46178398,
-        //         "max": 0,
-        //         "mean": 23089199
-        //       },
-        //       "errorCount": 0
-        //     },
-        //     {
-        //       "name": "/ehr/{ehrId}/work-plan/instantiate",
-        //       "histogramSnapshot": {
-        //         "percentileValues": [
-        //           {
-        //             "percentile": 0.9,
-        //             "value": 49414144
-        //           },
-        //           {
-        //             "percentile": 0.95,
-        //             "value": 54394880
-        //           },
-        //           {
-        //             "percentile": 0.99,
-        //             "value": 83755008
-        //           }
-        //         ],
-        //         "count": 639,
-        //         "total": 27237479011,
-        //         "max": 2823588400,
-        //         "mean": 42625162.772
-        //       },
-        //       "currentHistogramSnapshot": {
-        //         "percentileValues": [],
-        //         "count": 2,
-        //         "total": 91601500,
-        //         "max": 0,
-        //         "mean": 45800750
-        //       },
-        //       "errorCount": 1
-        //     },
-        //     {
-        //       "name": "/ehr/{ehrId}/work-plan/materialise/{workPlanId}",
-        //       "histogramSnapshot": {
-        //         "percentileValues": [
-        //           {
-        //             "percentile": 0.9,
-        //             "value": 55836672
-        //           },
-        //           {
-        //             "percentile": 0.95,
-        //             "value": 62128128
-        //           },
-        //           {
-        //             "percentile": 0.99,
-        //             "value": 75759616
-        //           }
-        //         ],
-        //         "count": 639,
-        //         "total": 31068528452,
-        //         "max": 1019313500,
-        //         "mean": 48620545.308
-        //       },
-        //       "currentHistogramSnapshot": {
-        //         "percentileValues": [],
-        //         "count": 2,
-        //         "total": 103636299,
-        //         "max": 0,
-        //         "mean": 51818149.5
-        //       },
-        //       "errorCount": 4
-        //     },
-        //     {
-        //       "name": "/ehr/{ehrId}/work-plan/{mWorkPlanId}",
-        //       "histogramSnapshot": {
-        //         "percentileValues": [
-        //           {
-        //             "percentile": 0.9,
-        //             "value": 165150720
-        //           },
-        //           {
-        //             "percentile": 0.95,
-        //             "value": 175636480
-        //           },
-        //           {
-        //             "percentile": 0.99,
-        //             "value": 210239488
-        //           }
-        //         ],
-        //         "count": 639,
-        //         "total": 94390013898,
-        //         "max": 831860800,
-        //         "mean": 147715201.718
-        //       },
-        //       "currentHistogramSnapshot": {
-        //         "percentileValues": [],
-        //         "count": 4,
-        //         "total": 629111298,
-        //         "max": 0,
-        //         "mean": 157277824.5
-        //       },
-        //       "errorCount": 1
-        //     },
-        //     {
-        //       "name": "/ehr/{ehrId}/work-plan/{mWorkPlanId}/performer",
-        //       "histogramSnapshot": {
-        //         "percentileValues": [
-        //           {
-        //             "percentile": 0.9,
-        //             "value": 321912832
-        //           },
-        //           {
-        //             "percentile": 0.95,
-        //             "value": 332398592
-        //           },
-        //           {
-        //             "percentile": 0.99,
-        //             "value": 384827392
-        //           }
-        //         ],
-        //         "count": 637,
-        //         "total": 178577522998,
-        //         "max": 558596399,
-        //         "mean": 280341480.374
-        //       },
-        //       "currentHistogramSnapshot": {
-        //         "percentileValues": [],
-        //         "count": 2,
-        //         "total": 641360299,
-        //         "max": 0,
-        //         "mean": 320680149.5
-        //       },
-        //       "errorCount": 3
-        //     }
-        //   ]
-        // }
-
         let addKeyIdent = v => {
           v.key = Math.random();
           return v;
@@ -428,7 +240,7 @@
 
       async fetchExceptionsData() {
 
-        let reqUrl = 'https://thinkehr4.marand.si:8865/actuator/advancedmetrics/exceptions';
+        let reqUrl = 'actuator/advancedmetrics/exceptions';
 
         var response = await this.instance.axios.get(reqUrl, {
           headers: {'Accept': ['application/json']}
@@ -460,6 +272,7 @@
           .subscribe({
             next: sanitizedResponse => {
               this.advancedmetrics.statistics = sanitizedResponse;
+
               this.advancedmetrics.percentileValuesLabelArr = this.parsePercentileValuesLabelArr(sanitizedResponse[0]);
 
               this.advancedmetrics.errorsChartData = ErrorGraphDataParser.parseErrors(sanitizedResponse, this.currentErrorsChartData);
@@ -497,7 +310,6 @@
           });
       },
 
-
       async subscribe() {
         if (!this.subscriptions.length) {
           this.subscriptions.push(await this.createStatsSubscription());
@@ -532,9 +344,9 @@
         if (snapshot.currentErrorCount) {
           Object.keys(snapshot.currentErrorCount).forEach((errorName)=>{
             var errC = parseInt(snapshot.currentErrorCount[errorName]);
-            if (!isNaN(errC)) {
-              totalErrorsNr += errC;
-            }
+          if (!isNaN(errC)) {
+            totalErrorsNr += errC;
+          }
           })
         }
       });
@@ -643,9 +455,9 @@
 </script>
 
 <style>
-  .exceptions-w {
-    margin-top: 30px;
-  }
+    .exceptions-w {
+        margin-top: 30px;
+    }
 
   .trace-chart__svg {
     overflow: visible;
