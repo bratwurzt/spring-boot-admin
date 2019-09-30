@@ -20,23 +20,33 @@
                         <td v-text="$t('custom.backup_endpoint.table.content.status.'+bckp.status)"/>
                         <td v-text="bckp.error"/>
                         <td>
-                <span v-if="bckp.status === 'COMPLETED'">
-                  <a @click="restoreBackup(bckp.id)">{{$t('custom.backup_endpoint.start_restore')}}</a>
-                  <a @click="deleteBackup(bckp.id)"> / {{$t('custom.backup_endpoint.delete_backup')}}</a>
-                </span>
+
+                  <a v-if="bckp.status === 'COMPLETED'" @click="restoreBackup(bckp.id)">{{$t('custom.backup_endpoint.start_restore')}}</a>
+
+                  <a v-if="bckp.status === 'IN_PROGRESS'" @click="deleteBackup(bckp.id)">{{$t('custom.backup_endpoint.delete_backup')}}</a>
+
                         </td>
                     </tr>
                 </template>
                 </tbody>
             </table>
-            <a @click="createBackup()" class="button is-primary">
-                <font-awesome-icon icon="download"/>
-                {{$t('custom.backup_endpoint.create_new_backup')}}
-            </a>
+
+        </div>
+      <div class="container">
+        <input class="line-height-1 margin-right" type="text" v-model="incrementalParentId" placeholder="incremental id"/>
+        <a @click="createBackup(incrementalParentId)" class="button is-primary">
+          <font-awesome-icon icon="download"/>
+          {{$t('custom.backup_endpoint.create_new_backup')}}
+        </a>
+      </div>
+      <h1>{{$t('custom.backup_endpoint.restore.title')}}</h1>
+        <div class="container">
+          <h6 v-if="!!restoreInProgress._workPlansLeft">{{$t('custom.backup_endpoint.restore_in_progress')}} {{$t('custom.backup_endpoint.restore_started')}} {{restoreInProgress.restoreStartTimestamp}} / {{$t('custom.backup_endpoint.workplans_left')}} {{restoreInProgress._workPlansLeft}}</h6>
+
         </div>
         <div class="container">
-            <input class="topmarginpadding" type="text" v-model="restoreId"/>
-            <a @click="restoreBackup(restoreId)" class="button is-small is-primary topmarginpadding">
+            <input class="margin-top-1 line-height-2  margin-right" type="text" v-model="restoreId"/>
+            <a @click="restoreBackup(restoreId)" class="button is-small is-primary margin-top-1">
                 <font-awesome-icon icon="redo"/>
                 {{$t('custom.backup_endpoint.restore_by_id')}}
             </a>
@@ -68,6 +78,7 @@
     data: () => ({
       subscriptions: [],
       backupData: [],
+        restoreInProgress: {},
       refreshData: new BehaviorSubject(null),
       mockData: [
         {
@@ -111,8 +122,12 @@
         }
       },
 
-      async createBackup() {
-        await this.axios.post(uri`actuator/backup`)
+      async createBackup(incrementalBkpId) {
+          var params = '';
+          if(incrementalBkpId){
+              params = '?previous_backup='+incrementalBkpId;
+          }
+        await this.instance.axios.post(`actuator/backup`+params)
         this.refreshData.next();
       },
 
@@ -132,7 +147,17 @@
         return response.data
       },
 
-      createStatsSubscription() {
+      async fetchRestoreData() {
+        var response = await this.instance.axios.get('actuator/restore', {
+          headers: {'Accept': ['application/json']},
+          validateStatus: function (status) {
+              return (status >= 200 && status < 300) || status===404;
+          }
+        });
+        return response.data
+      },
+
+      createBackupsSubscription() {
         const vm = this;
         return this.refreshData.asObservable()
           .pipe(
@@ -149,15 +174,41 @@
               this.backupData = backupData;
             },
             error: error => {
-              console.warn('Fetching data failed:', error);
-              alert('Fetching data failed. ' + (error.message ? error.message : ''));
+              console.warn('Fetching backup data failed:', error);
+              alert('Fetching backup data failed. ' + (error.message ? error.message : ''));
+            }
+          });
+      },
+
+      createRestoreSubscription() {
+        const vm = this;
+        return this.refreshData.asObservable()
+          .pipe(
+            combineLatest(timer(0, 10000)),
+            switchMap(() => {
+              return vm.fetchRestoreData();
+            })
+          )
+          .subscribe({
+            next: restoreData => {
+              if(restoreData && !restoreData.restoreEndTimestamp && restoreData.status ==='IN_PROGRESS' && !!restoreData.workPlanCount){
+                  this.restoreInProgress = data;
+                  this.restoreInProgress._workPlansLeft = this.restoreInProgress.workPlanCount - this.restoreInProgress.workPlansRestored;
+              }else {
+                  this.restoreInProgress = {};
+              }
+            },
+            error: error => {
+              console.warn('Fetching restore data failed:', error);
+              alert('Fetching restore data failed. ' + (error.message ? error.message : ''));
             }
           });
       },
 
       async subscribe() {
         if (!this.subscriptions.length) {
-          this.subscriptions.push(await this.createStatsSubscription());
+          this.subscriptions.push(await this.createBackupsSubscription());
+          this.subscriptions.push(await this.createRestoreSubscription());
         }
       },
 
@@ -179,7 +230,19 @@
 </script>
 
 <style>
-    .topmarginpadding {
+    .margin-top-1 {
         margin-top: 30px;
     }
+
+    .margin-right{
+      margin-right: 10px;
+    }
+
+  .line-height-1{
+    line-height: 32px;
+  }
+
+  .line-height-2{
+    line-height: 22px;
+  }
 </style>
