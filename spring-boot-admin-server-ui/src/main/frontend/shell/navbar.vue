@@ -18,31 +18,31 @@
   <nav id="navigation" class="navbar is-fixed-top">
     <div class="container">
       <div class="navbar-brand">
-        <router-link class="navbar-item logo" to="/" v-html="brand"/>
+        <router-link class="navbar-item logo" to="/" v-html="brand" />
 
         <div class="navbar-burger burger" @click.stop="showMenu = !showMenu">
-          <span/>
-          <span/>
-          <span/>
+          <span />
+          <span />
+          <span />
         </div>
       </div>
       <div class="navbar-menu" :class="{'is-active' : showMenu}">
         <div class="navbar-end">
           <router-link class="navbar-item" v-for="view in enabledViews" :to="{name: view.name}" :key="view.name">
-            <span v-if="!view.handle.props">{{ $t('menu.'+view.name) }}</span>
+            <span v-if="!view.handle.props">{{$t('menu.'+view.name)}}</span>
             <component v-else :is="view.handle" :applications="applications" :error="error"/>
           </router-link>
 
           <div class="navbar-item has-dropdown is-hoverable" v-if="userName">
             <a class="navbar-link">
-              <font-awesome-icon icon="user-circle" size="lg"/>&nbsp;<span v-text="userName"/>
+              <font-awesome-icon icon="user-circle" size="lg" />&nbsp;<span v-text="userName" />
             </a>
             <div class="navbar-dropdown">
               <a class="navbar-item">
                 <form action="logout" method="post">
                   <input v-if="csrfToken" type="hidden" :name="csrfParameterName" :value="csrfToken">
                   <button class="button is-icon" type="submit" value="logout">
-                    <font-awesome-icon icon="sign-out-alt"/>&nbsp;Log out
+                    <font-awesome-icon icon="sign-out-alt" />&nbsp;{{$t('navbar.log_out')}}
                   </button>
                 </form>
               </a>
@@ -51,11 +51,11 @@
 
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">
-              <span>{{ $i18n.locale }}</span>&nbsp;
+              <span>{{$i18n.locale}}</span>&nbsp;
             </a>
             <div class="navbar-dropdown">
               <a class="navbar-item" v-for="lang in $i18n.availableLocales" :key="lang" @click="setLanguage(lang)" v-if="lang !== $i18n.locale">
-                {{ lang }}
+                {{lang}}
               </a>
             </div>
           </div>
@@ -91,12 +91,13 @@
         default: () => [],
       },
       error: {
-        type: null,
+        type: Error,
         default: null
       }
     },
     methods:{
       setLanguage: function (lang) {
+        console.log('lang-', lang);
         this.$i18n.locale = lang;
       }
     },
@@ -108,19 +109,17 @@
       }
     },
     created() {
-      /* global SBA */
-      if (SBA) {
-        if (SBA.uiSettings) {
-          this.brand = SBA.uiSettings.brand || this.brand;
+      if (global.SBA) {
+        if (global.SBA.uiSettings) {
+          this.brand = global.SBA.uiSettings.brand || this.brand;
         }
 
-        if (SBA.user) {
-          this.userName = SBA.user.name;
+        if (global.SBA.user) {
+          this.userName = global.SBA.user.name;
         }
       }
       this.csrfToken = readCookie('XSRF-TOKEN');
-      /* global SBA */
-      this.csrfParameterName = (SBA && SBA.csrf && SBA.csrf.parameterName) || '_csrf';
+      this.csrfParameterName = (global.SBA && global.SBA.csrf && global.SBA.csrf.parameterName) || '_csrf';
     },
     mounted() {
       document.documentElement.classList.add('has-navbar-fixed-top');

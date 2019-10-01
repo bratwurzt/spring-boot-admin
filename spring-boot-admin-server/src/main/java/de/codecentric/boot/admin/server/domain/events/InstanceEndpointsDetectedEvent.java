@@ -19,10 +19,12 @@ package de.codecentric.boot.admin.server.domain.events;
 import de.codecentric.boot.admin.server.domain.values.Endpoints;
 import de.codecentric.boot.admin.server.domain.values.InstanceId;
 
+import java.time.Instant;
+
 /**
  * This event gets emitted when all instance's endpoints are discovered.
  *
- * @author Johannes Stelzer
+ * @author Johannes Edmeier
  */
 @lombok.Data
 @lombok.EqualsAndHashCode(callSuper = true)
@@ -32,7 +34,11 @@ public class InstanceEndpointsDetectedEvent extends InstanceEvent {
     private final Endpoints endpoints;
 
     public InstanceEndpointsDetectedEvent(InstanceId instance, long version, Endpoints endpoints) {
-        super(instance, version, "ENDPOINTS_DETECTED");
+        this(instance, version, Instant.now(), endpoints);
+    }
+
+    public InstanceEndpointsDetectedEvent(InstanceId instance, long version, Instant timestamp, Endpoints endpoints) {
+        super(instance, version, "ENDPOINTS_DETECTED", timestamp);
         this.endpoints = endpoints;
     }
 }

@@ -17,53 +17,36 @@
 <template>
   <section class="section">
     <div class="container">
+      <p v-if="!applicationsInitialized" class="is-muted is-loading">
+        {{$t('view.applications.header.applications-loading')}}
+      </p>
       <div v-if="error" class="message is-warning">
         <div class="message-body">
           <strong>
             <font-awesome-icon class="has-text-warning" icon="exclamation-triangle"/>
-            {{ $t('view.applications.header.server_conn_failed') }}
+            {{$t('view.applications.header.server_conn_failed')}}
           </strong>
-          <p v-text="error.message"/>
+          <p v-text="error.message" />
         </div>
       </div>
-      <div class="level applications-stats">
-        <div class="level-item has-text-centered">
-          <div>
-            <p class="heading">{{ $t('view.applications.header.applications') }}</p>
-            <p class="title" v-text="applicationsCount">1</p>
-          </div>
+      <template v-if="applicationsInitialized">
+        <applications-stats :applications="applications" />
+        <div class="application-group" v-for="group in statusGroups" :key="group.status">
+          <p class="heading" v-text="$t('view.applications.list_title.status.' + group.status)" />
+          <applications-list :applications="group.applications" :selected="selected" />
         </div>
-        <div class="level-item has-text-centered">
-          <div>
-            <p class="heading">{{ $t('view.applications.header.instances') }}</p>
-            <p class="title" v-text="instancesCount">1</p>
-          </div>
-        </div>
-        <div class="level-item has-text-centered">
-          <div v-if="downCount === 0">
-            <p class="heading">{{ $t('view.applications.header.status') }}</p>
-            <p class="title has-text-success">{{ $t('view.applications.header.status.allup') }}</p>
-          </div>
-          <div v-else>
-            <p class="heading">{{ $t('view.applications.header.status.instances_down') }}</p>
-            <p class="title has-text-danger" v-text="downCount"/>
-          </div>
-        </div>
-      </div>
-      <div class="application-group" v-for="group in statusGroups" :key="group.status">
-        <p class="heading" v-text="$t('view.applications.list_title.status.'+group.status)"/>
-        <applications-list :applications="group.applications" :selected="selected"/>
-      </div>
-      <div v-if="statusGroups.length === 0">
-        <p class="is-muted">{{ $t('view.applications.header.none_registered') }}</p>
-      </div>
+        <p v-if="statusGroups.length === 0" class="is-muted">{{$t('view.applications.header.none_registered')}}</p>
+      </template>
     </div>
   </section>
 </template>
 
 <script>
-  import * as _ from 'lodash';
+  import groupBy from 'lodash/groupBy';
+  import sortBy from 'lodash/sortBy';
+  import transform from 'lodash/transform';
   import applicationsList from './applications-list';
+  import applicationsStats from './applications-stats';
   import handle from './handle';
 
   export default {
@@ -73,35 +56,26 @@
         default: () => [],
       },
       error: {
-        type: null,
+        type: Error,
         default: null
       },
       selected: {
         type: String,
         default: null
+      },
+      applicationsInitialized: {
+        type: Boolean,
+        default: false
       }
     },
-    components: {
-      applicationsList,
-    },
+    components: {applicationsStats, applicationsList},
     computed: {
       statusGroups() {
-        const byStatus = _.groupBy(this.applications, application => application.status);
-        const list = _.transform(byStatus, (result, value, key) => {
-          result.push({status: key, applications: _.sortBy(value, [application => application.name])})
+        const byStatus = groupBy(this.applications, application => application.status);
+        const list = transform(byStatus, (result, value, key) => {
+          result.push({status: key, applications: sortBy(value, [application => application.name])})
         }, []);
-        return _.sortBy(list, [item => item.status]);
-      },
-      applicationsCount() {
-        return this.applications.length;
-      },
-      instancesCount() {
-        return this.applications.reduce((current, next) => current + next.instances.length, 0);
-      },
-      downCount() {
-        return this.applications.reduce((current, next) => {
-          return current + (next.instances.filter(instance => instance.statusInfo.status !== 'UP').length);
-        }, 0);
+        return sortBy(list, [item => item.status]);
       }
     },
     install({viewRegistry}) {
@@ -126,5 +100,4 @@
   .application-group {
     margin: $gap 0;
   }
-
 </style>

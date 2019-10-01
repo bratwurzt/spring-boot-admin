@@ -27,7 +27,8 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
-import org.junit.ClassRule;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.boot.actuate.endpoint.http.ActuatorMediaType;
@@ -36,7 +37,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import com.github.tomakehurst.wiremock.core.Options;
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
@@ -51,17 +52,29 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.HttpHeaders.EMPTY;
 import static wiremock.org.apache.http.HttpHeaders.ACCEPT;
 
 public class InstanceWebClientTest {
-    @ClassRule
-    public static final WireMockClassRule wireMockClass = new WireMockClassRule(Options.DYNAMIC_PORT);
     @Rule
-    public WireMockClassRule wireMock = wireMockClass;
+    public WireMockRule wireMock = new WireMockRule(Options.DYNAMIC_PORT);
 
-    private final HttpHeadersProvider headersProvider = mock(HttpHeadersProvider.class, invocation -> EMPTY);
-    private final InstanceWebClient instanceWebClient = new InstanceWebClient(headersProvider);
+    private final HttpHeadersProvider headersProvider = mock(
+        HttpHeadersProvider.class,
+        invocation -> HttpHeaders.EMPTY
+    );
+    private final InstanceWebClient instanceWebClient = InstanceWebClient.builder()
+                                                                         .httpHeadersProvider(headersProvider)
+                                                                         .build();
+
+    @BeforeClass
+    public static void setUp() {
+        StepVerifier.setDefaultTimeout(Duration.ofSeconds(5));
+    }
+
+    @AfterClass
+    public static void tearDown() {
+        StepVerifier.resetDefaultTimeout();
+    }
 
     @Test
     public void should_rewirte_url() {
@@ -161,7 +174,7 @@ public class InstanceWebClientTest {
         StepVerifier.create(exchange).expectNextCount(1).verifyComplete();
         wireMock.verify(1,
             getRequestedFor(urlEqualTo("/log")).withHeader(ACCEPT, containing(MediaType.TEXT_PLAIN_VALUE))
-                                                  .withHeader(ACCEPT, containing(MediaType.ALL_VALUE))
+                                               .withHeader(ACCEPT, containing(MediaType.ALL_VALUE))
         );
     }
 
@@ -232,10 +245,10 @@ public class InstanceWebClientTest {
 
     @Test
     public void should_error_on_timeout() {
-        InstanceWebClient fastTimeoutClient = new InstanceWebClient(headersProvider,
-            Duration.ofMillis(10),
-            Duration.ofMillis(10)
-        );
+        InstanceWebClient fastTimeoutClient = InstanceWebClient.builder()
+                                                               .connectTimeout(Duration.ofMillis(10L))
+                                                               .readTimeout(Duration.ofMillis(10L))
+                                                               .build();
 
         wireMock.stubFor(get("/foo").willReturn(ok().withFixedDelay(100)));
 

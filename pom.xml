@@ -15,27 +15,29 @@
   ~ limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.codecentric</groupId>
     <artifactId>spring-boot-admin</artifactId>
-    <version>${revision}</version>
+    <version>2.1.2-M10</version>
     <packaging>pom</packaging>
     <name>Spring Boot Admin</name>
     <description>Spring Boot Admin</description>
-    <url>https://github.com/codecentric/spring-boot-admin/</url>
+    <url>https://gitlab.marand.si/thinkehr/spring-boot-admin</url>
     <properties>
-        <revision>2.0.5-SNAPSHOT</revision>
-        <spring-boot.version>2.0.6.RELEASE</spring-boot.version>
-        <spring-cloud.version>Finchley.SR2</spring-cloud.version>
-        <hazelcast-tests.version>3.9.4</hazelcast-tests.version>
+        <revision>2.1.2-M10</revision>
         <java.version>1.8</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <resource.delimiter>@</resource.delimiter>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- used dependencies versions -->
+        <spring-boot.version>2.1.1.RELEASE</spring-boot.version>
+        <spring-cloud.version>Finchley.SR2</spring-cloud.version>
+        <hazelcast-tests.version>3.11</hazelcast-tests.version>
+        <findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
 
         <!-- plugin versions -->
         <build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
@@ -55,11 +57,13 @@
         <maven-war-plugin.version>3.2.2</maven-war-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
-        <jacoco-maven-plugin.version>0.8.1</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.2</jacoco-maven-plugin.version>
         <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
         <asciidoctor-maven-plugin.version>1.5.6</asciidoctor-maven-plugin.version>
-        <git-commit-id-plugin.version>2.2.4</git-commit-id-plugin.version>
+        <git-commit-id-plugin.version>2.2.5</git-commit-id-plugin.version>
         <flatten-maven-plugin.version>1.0.1</flatten-maven-plugin.version>
+        <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
+        <checkstyle.version>8.14</checkstyle.version>
     </properties>
     <modules>
         <module>spring-boot-admin-server</module>
@@ -83,10 +87,10 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:git:git://github.com/codecentric/spring-boot-admin.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/codecentric/spring-boot-admin.git</developerConnection>
-        <url>https://github.com/codecentric/spring-boot-admin</url>
-    </scm>
+        <developerConnection>scm:git:git@gitlab.marand.si:thinkehr/spring-boot-admin.git</developerConnection>
+        <connection>scm:git:git@gitlab.marand.si:thinkehr/spring-boot-admin.git</connection>
+      <tag>spring-boot-admin-2.1.2-M5</tag>
+  </scm>
     <developers>
         <developer>
             <name>Johannes Edmeier</name>
@@ -132,6 +136,27 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>checkstyle-validation</id>
+                        <phase>validate</phase>
+                        <configuration>
+                            <configLocation>src/checkstyle/checkstyle.xml</configLocation>
+                            <headerLocation>src/checkstyle/checkstyle-header.txt</headerLocation>
+                            <encoding>UTF-8</encoding>
+                            <consoleOutput>true</consoleOutput>
+                            <failOnViolation>true</failOnViolation>
+                            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                        </configuration>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <!-- this fix is needed for the eclipse-plugin to get the right java-version -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -169,6 +194,25 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.5</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -182,11 +226,11 @@
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>${maven-clean-plugin.version}</version>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>${maven-site-plugin.version}</version>
-                </plugin>
+<!--                <plugin>-->
+<!--                    <groupId>org.apache.maven.plugins</groupId>-->
+<!--                    <artifactId>maven-site-plugin</artifactId>-->
+<!--                    <version>${maven-site-plugin.version}</version>-->
+<!--                </plugin>-->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
@@ -211,6 +255,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
                     <version>${maven-dependency-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${maven-enforcer-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -272,6 +321,18 @@
                     <version>${maven-gpg-plugin.version}</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${maven-checkstyle-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.puppycrawl.tools</groupId>
+                            <artifactId>checkstyle</artifactId>
+                            <version>${checkstyle.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
                     <version>${exec-maven-plugin.version}</version>
@@ -285,6 +346,16 @@
                     <groupId>org.asciidoctor</groupId>
                     <artifactId>asciidoctor-maven-plugin</artifactId>
                     <version>${asciidoctor-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.eluder.coveralls</groupId>
+                    <artifactId>coveralls-maven-plugin</artifactId>
+                    <version>${coveralls-maven-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -343,7 +414,6 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>${jacoco-maven-plugin.version}</version>
                         <executions>
                             <!-- Prepares the property pointing to the JaCoCo
                             runtime agent which is passed as VM argument when Maven the Surefire plugin
@@ -368,7 +438,6 @@
                     <plugin>
                         <groupId>org.eluder.coveralls</groupId>
                         <artifactId>coveralls-maven-plugin</artifactId>
-                        <version>${coveralls-maven-plugin.version}</version>
                     </plugin>
                 </plugins>
             </build>
@@ -430,14 +499,14 @@
     </profiles>
     <distributionManagement>
         <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <id>artifactory-snapshots</id>
+            <name>plugins-snapshot-local</name>
+            <url>http://artifactory.marand.si:80/artifactory/plugins-snapshot-local</url>
         </snapshotRepository>
         <repository>
-            <id>sonatype-nexus-staging</id>
-            <name>Nexus Release Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>artifactory-releases</id>
+            <name>artifactory.marand.si-releases</name>
+            <url>http://artifactory.marand.si:80/artifactory/thinkehr-releases</url>
         </repository>
     </distributionManagement>
 </project>

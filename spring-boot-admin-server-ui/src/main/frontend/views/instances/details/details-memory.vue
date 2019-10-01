@@ -21,7 +21,7 @@
         <div class="message-body">
           <strong>
             <font-awesome-icon class="has-text-danger" icon="exclamation-triangle"/>
-            {{ $t('view.instances.details_memory.fetching_memory_failed') }}
+            {{$t('view.instances.details_memory.fetching_memory_failed')}}
           </strong>
           <p v-text="error.message"/>
         </div>
@@ -29,25 +29,25 @@
       <div class="level memory-current" v-if="current">
         <div class="level-item has-text-centered" v-if="current.metaspace">
           <div>
-            <p class="heading has-bullet has-bullet-primary">{{ $t('view.instances.details_memory.metaspace') }}</p>
+            <p class="heading has-bullet has-bullet-primary">{{$t('view.instances.details_memory.metaspace')}}</p>
             <p v-text="prettyBytes(current.metaspace)"/>
           </div>
         </div>
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading has-bullet has-bullet-info">{{ $t('view.instances.details_memory.used') }}</p>
+            <p class="heading has-bullet has-bullet-info">{{$t('view.instances.details_memory.used')}}</p>
             <p v-text="prettyBytes(current.used)"/>
           </div>
         </div>
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading has-bullet has-bullet-warning">{{ $t('view.instances.details_memory.size') }}</p>
+            <p class="heading has-bullet has-bullet-warning">{{$t('view.instances.details_memory.size')}}</p>
             <p v-text="prettyBytes(current.committed)"/>
           </div>
         </div>
         <div class="level-item has-text-centered" v-if="current.max >= 0">
           <div>
-            <p class="heading">{{ $t('view.instances.details_memory.max') }}</p>
+            <p class="heading">{{$t('view.instances.details_memory.max')}}</p>
             <p v-text="prettyBytes(current.max)"/>
           </div>
         </div>

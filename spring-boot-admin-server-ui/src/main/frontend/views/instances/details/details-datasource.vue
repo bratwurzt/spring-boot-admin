@@ -21,7 +21,7 @@
         <div class="message-body">
           <strong>
             <font-awesome-icon class="has-text-danger" icon="exclamation-triangle"/>
-            {{ $t('view.instances.details_datasource.fetching_datasource_failed') }}
+            {{$t('view.instances.details_datasource.fetching_datasource_failed')}}
           </strong>
           <p v-text="error.message"/>
         </div>
@@ -29,21 +29,21 @@
       <div class="level datasource-current" v-if="current">
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading has-bullet has-bullet-info">{{ $t('view.instances.details_datasource.active_conns') }}</p>
+            <p class="heading has-bullet has-bullet-info">{{$t('view.instances.details_datasource.active_conns')}}</p>
             <p v-text="current.active"/>
           </div>
         </div>
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading">{{ $t('view.instances.details_datasource.min_conns') }}</p>
+            <p class="heading">{{$t('view.instances.details_datasource.min_conns')}}</p>
             <p v-text="current.min"/>
           </div>
         </div>
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading">{{ $t('view.instances.details_datasource.max_conns') }}</p>
+            <p class="heading">{{$t('view.instances.details_datasource.max_conns')}}</p>
             <p v-if="current.max >= 0" v-text="current.max"/>
-            <p v-else>{{ $t('view.instances.details_datasource.max_conns_unlimited') }}</p>
+            <p v-else>{{$t('view.instances.details_datasource.max_conns_unlimited')}}</p>
           </div>
         </div>
       </div>

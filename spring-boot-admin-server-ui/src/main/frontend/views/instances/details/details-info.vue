@@ -21,7 +21,7 @@
         <div class="message-body">
           <strong>
             <font-awesome-icon class="has-text-warning" icon="exclamation-triangle"/>
-            {{ $t('view.instances.details_info.fetching_info_failed') }}
+            {{$t('view.instances.details_info.fetching_info_failed')}}
           </strong>
           <p v-text="error.message"/>
         </div>
@@ -35,7 +35,7 @@
             </td>
           </tr>
         </table>
-        <p v-else class="is-muted">{{ $t('view.instances.details_info.no_info') }}</p>
+        <p v-else class="is-muted">{{$t('view.instances.details_info.no_info')}}</p>
       </div>
     </div>
   </sba-panel>

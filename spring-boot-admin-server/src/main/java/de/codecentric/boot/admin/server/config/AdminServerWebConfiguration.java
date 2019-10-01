@@ -28,17 +28,14 @@ import de.codecentric.boot.admin.server.web.InstancesController;
 import de.codecentric.boot.admin.server.web.client.InstanceWebClient;
 import de.codecentric.boot.admin.server.web.servlet.InstancesProxyController;
 
-import java.util.concurrent.ThreadPoolExecutor;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.task.AsyncTaskExecutor;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.reactive.accept.RequestedContentTypeResolver;
-import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 @Configuration
@@ -106,34 +103,12 @@ public class AdminServerWebConfiguration {
 
     @Configuration
     @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+    @AutoConfigureAfter(WebMvcAutoConfiguration.class)
     public static class ServletRestApiConfirguation {
         private final AdminServerProperties adminServerProperties;
 
         public ServletRestApiConfirguation(AdminServerProperties adminServerProperties) {
             this.adminServerProperties = adminServerProperties;
-        }
-
-        @Bean
-        @ConditionalOnMissingBean(name = "webMvcAsyncTaskExecutor")
-        public AsyncTaskExecutor webMvcAsyncTaskExecutor() {
-            final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-            executor.setCorePoolSize(5);
-            executor.setMaxPoolSize(5);
-            executor.setQueueCapacity(5);
-            executor.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
-            executor.setWaitForTasksToCompleteOnShutdown(true);
-            return executor;
-        }
-
-        @Bean
-        @ConditionalOnMissingBean(name = "webMvcConfigurer")
-        public WebMvcConfigurer webMvcConfigurer() {
-            return new WebMvcConfigurer() {
-                @Override
-                public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
-                    configurer.setTaskExecutor(webMvcAsyncTaskExecutor());
-                }
-            };
         }
 
         @Bean
